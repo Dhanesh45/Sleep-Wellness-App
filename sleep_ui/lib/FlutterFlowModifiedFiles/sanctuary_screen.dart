@@ -1,0 +1,777 @@
+import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
+
+class SanctuaryHomePage extends StatefulWidget {
+  const SanctuaryHomePage({super.key});
+
+  static const String routeName = 'SanctuaryHomePage';
+  static const String routePath = '/sanctuaryHome';
+
+  @override
+  State<SanctuaryHomePage> createState() => _SanctuaryHomePageState();
+}
+
+class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
+  // Theme
+  final Color _primaryBackground = const Color(0xFF050814);
+  final Color _cardBackground = const Color(0xFF111827);
+  final Color _primaryText = Colors.white;
+  final Color _secondaryText = const Color(0xFF9CA3AF);
+  final Color _accentYellow = const Color(0xFFFBBF24);
+  final Color _accentOrange = const Color(0xFFFB923C);
+  final Color _accentPink = const Color(0xFFFB7185);
+  final Color _accentBlue = const Color(0xFF38BDF8);
+
+  int _selectedBottomIndex = 0;
+
+  // Sleep chart dummy values (Mon–Sun)
+  final List<double> _sleepValues = const [4.5, 6, 7, 6.5, 8, 7.2, 6.8];
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: _primaryBackground,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildGreetingHeader(),
+                const SizedBox(height: 24),
+                _buildSanctuaryCard(),
+                const SizedBox(height: 20),
+                _buildSleepConsistencyCard(),
+                const SizedBox(height: 20),
+                _buildAudioZoneRow(),
+                const SizedBox(height: 24),
+                _buildSectionHeader(
+                  title: 'Soothing Sounds',
+                  action: 'See All',
+                ),
+                const SizedBox(height: 16),
+                _buildSoothingSoundsList(),
+                const SizedBox(height: 24),
+                _buildSectionHeader(
+                  title: 'Natural Remedies',
+                  trailingIcon: Icons.auto_awesome_rounded,
+                ),
+                const SizedBox(height: 16),
+                _buildRemedyCard(),
+                const SizedBox(height: 24),
+                _buildBottomNavPill(),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // -------------------- TOP HEADER --------------------
+
+  Widget _buildGreetingHeader() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Good evening,',
+                style: GoogleFonts.nunito(
+                  color: _primaryText,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  height: 1.2,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'The world is quiet now.',
+                style: GoogleFonts.quicksand(
+                  color: _secondaryText.withOpacity(0.9),
+                  fontSize: 14,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 16),
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
+          ),
+          child: ClipOval(
+            child: CachedNetworkImage(
+              fadeInDuration: Duration.zero,
+              fadeOutDuration: Duration.zero,
+              imageUrl:
+                  'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // -------------------- SANCTUARY CARD --------------------
+
+  Widget _buildSanctuaryCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 22),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF111827), Color(0xFF020617)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: 140,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                ClipRect(
+                  child: ImageFiltered(
+                    imageFilter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+                    child: Container(
+                      width: 130,
+                      height: 130,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            _accentOrange.withOpacity(0.25),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Lottie.asset(
+                  'assets/lottie/campfire.json',
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.contain,
+                  repeat: true,
+                  animate: true,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Your sanctuary is warm',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.nunito(
+              color: _primaryText,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.32),
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.shield_rounded, size: 16, color: _accentBlue),
+                const SizedBox(width: 8),
+                Text(
+                  'Shield Active',
+                  style: GoogleFonts.quicksand(
+                    color: _primaryText,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // -------------------- SLEEP CONSISTENCY --------------------
+
+  Widget _buildSleepConsistencyCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        color: _cardBackground,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Sleep Consistency',
+                style: GoogleFonts.nunito(
+                  color: _primaryText,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '7h 12m avg',
+                style: GoogleFonts.quicksand(
+                  color: _accentYellow,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            height: 72,
+            child: CustomPaint(
+              painter: _SleepChartPainter(
+                values: _sleepValues,
+                lineColor: _accentYellow,
+                dotColor: _accentYellow,
+                backgroundLineColor: Colors.white.withOpacity(0.05),
+              ),
+              child: Container(),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'You spent 7 hours resting your mind last night.',
+            style: GoogleFonts.quicksand(color: _secondaryText, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // -------------------- AUDIO ZONE + CALM REGION --------------------
+
+ Widget _buildAudioZoneRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildRoundedBlobCard(
+            title: 'Audio Zone',
+            subtitle: 'Vibes & Sounds',
+            icon: Icons.music_note_rounded,
+            colors: const [Color(0xFFFFC44D), Color(0xFFFFAD33)],
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: _buildRoundedBlobCard(
+            title: 'Calm Region',
+            subtitle: 'Breathing & Zen',
+            icon: Icons.spa_rounded,
+            colors: const [Color(0xFFE68868), Color(0xFFE07A5F)],
+          ),
+        ),
+      ],
+    );
+  }
+
+Widget _buildRoundedBlobCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required List<Color> colors,
+    Alignment glowAlignment = Alignment.centerRight,
+  }) {
+    return Container(
+      height: 98,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        gradient: LinearGradient(
+          colors: colors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: Stack(
+          children: [
+            Positioned(
+              right: 14,
+              top: 10,
+              child: Container(
+                width: 86,
+                height: 86,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withOpacity(0.10),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 18,
+              top: 16,
+              child: Icon(
+                icon,
+                color: Colors.black.withOpacity(0.88),
+                size: 21,
+              ),
+            ),
+            Positioned(
+              left: 18,
+              right: 18,
+              top: 46,
+              child: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.nunito(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                  height: 1.0,
+                ),
+              ),
+            ),
+            Positioned(
+              left: 18,
+              right: 18,
+              top: 67,
+              child: Text(
+                subtitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.quicksand(
+                  color: Colors.white.withOpacity(0.80),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  height: 1.0,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  // -------------------- SECTION HEADER --------------------
+
+  Widget _buildSectionHeader({
+    required String title,
+    String? action,
+    IconData? trailingIcon,
+  }) {
+    return Row(
+      children: [
+        Text(
+          title,
+          style: GoogleFonts.nunito(
+            color: _primaryText,
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+          ),
+        ),
+        if (trailingIcon != null) ...[
+          const SizedBox(width: 8),
+          Icon(trailingIcon, color: _accentYellow, size: 18),
+        ],
+        const Spacer(),
+        if (action != null)
+          Text(
+            action,
+            style: GoogleFonts.quicksand(
+              color: _accentYellow,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
+          ),
+      ],
+    );
+  }
+
+  // -------------------- SOOTHING SOUNDS LIST --------------------
+
+  Widget _buildSoothingSoundsList() {
+    final List<String> items = [
+      'Rain on Tin Roof',
+      'Forest Night Drift',
+      'Soft City Showers',
+    ];
+
+    return SizedBox(
+      height: 190,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: items.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          return _buildSoundCard(items[index]);
+        },
+      ),
+    );
+  }
+
+  Widget _buildSoundCard(String title) {
+    return Container(
+      width: 140,
+      decoration: BoxDecoration(
+        color: _cardBackground,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            child: CachedNetworkImage(
+              fadeInDuration: Duration.zero,
+              fadeOutDuration: Duration.zero,
+              imageUrl:
+                  'https://images.pexels.com/photos/34088/pexels-photo.jpg',
+              height: 120,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+            ).copyWith(top: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: GoogleFonts.nunito(
+                    color: _primaryText,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Overnight',
+                  style: GoogleFonts.quicksand(
+                    color: _secondaryText,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // -------------------- REMEDY CARD --------------------
+
+  Widget _buildRemedyCard() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: _cardBackground,
+        borderRadius: BorderRadius.circular(28),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            child: CachedNetworkImage(
+              fadeInDuration: Duration.zero,
+              fadeOutDuration: Duration.zero,
+              imageUrl:
+                  'https://images.pexels.com/photos/3735631/pexels-photo-3735631.jpeg',
+              height: 190,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+            ).copyWith(top: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Ashwagandha Tonic',
+                  style: GoogleFonts.nunito(
+                    color: _primaryText,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Known as 'Winter Cherry', this adaptogen helps the body manage stress and cortisol levels for deeper REM sleep.",
+                  style: GoogleFonts.quicksand(
+                    color: _secondaryText,
+                    fontSize: 12,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(999),
+                        color: Colors.black.withOpacity(0.24),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.timer_rounded,
+                            size: 14,
+                            color: _secondaryText,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '10 min',
+                            style: GoogleFonts.quicksand(
+                              color: _secondaryText,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(999),
+                        color: _accentYellow.withOpacity(0.16),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Read Recipe',
+                            style: GoogleFonts.quicksand(
+                              color: _accentYellow,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 16,
+                            color: _accentYellow,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // -------------------- BOTTOM NAV PILL --------------------
+
+  Widget _buildBottomNavPill() {
+    final items = [
+      _BottomNavItem(Icons.nightlight_round_rounded, 'Sanctuary'),
+      _BottomNavItem(Icons.graphic_eq_rounded, 'Sounds'),
+      _BottomNavItem(Icons.spa_rounded, 'Detox'),
+      _BottomNavItem(Icons.bedtime_rounded, 'Sleep'),
+    ];
+
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: const Color(0xFF020617),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(
+            items.length,
+            (index) => _buildBottomNavChip(items[index], index),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomNavChip(_BottomNavItem item, int index) {
+    final bool selected = index == _selectedBottomIndex;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() => _selectedBottomIndex = index);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: selected
+              ? _accentYellow.withOpacity(0.18)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              item.icon,
+              size: 18,
+              color: selected ? _accentYellow : _secondaryText,
+            ),
+            const SizedBox(width: 6),
+            if (selected)
+              Text(
+                item.label,
+                style: GoogleFonts.quicksand(
+                  color: _accentYellow,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// -------------------- HELPERS --------------------
+
+class _BottomNavItem {
+  final IconData icon;
+  final String label;
+  const _BottomNavItem(this.icon, this.label);
+}
+
+class _SleepChartPainter extends CustomPainter {
+  _SleepChartPainter({
+    required this.values,
+    required this.lineColor,
+    required this.dotColor,
+    required this.backgroundLineColor,
+  });
+
+  final List<double> values;
+  final Color lineColor;
+  final Color dotColor;
+  final Color backgroundLineColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint bgPaint = Paint()
+      ..color = backgroundLineColor
+      ..strokeWidth = 1.5
+      ..style = PaintingStyle.stroke;
+
+    final Paint linePaint = Paint()
+      ..color = lineColor
+      ..strokeWidth = 2.5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    final Paint dotPaint = Paint()
+      ..color = dotColor
+      ..style = PaintingStyle.fill;
+
+    const double minH = 4;
+    const double maxH = 9;
+
+    // baseline
+    final double baselineY = size.height * 0.75;
+    canvas.drawLine(
+      Offset(0, baselineY),
+      Offset(size.width, baselineY),
+      bgPaint,
+    );
+
+    if (values.isEmpty) return;
+
+    final double stepX = values.length > 1
+        ? size.width / (values.length - 1)
+        : 0;
+    final Path path = Path();
+
+    for (int i = 0; i < values.length; i++) {
+      final double t = (values[i] - minH) / (maxH - minH);
+      final double x = stepX * i;
+      final double y = size.height - (t * size.height * 0.8);
+
+      if (i == 0) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+
+      canvas.drawCircle(Offset(x, y), 4, dotPaint);
+    }
+
+    canvas.drawPath(path, linePaint);
+
+    // weekday labels
+    const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    final textStyle = TextStyle(color: backgroundLineColor, fontSize: 10);
+    final double labelY = size.height - 2;
+
+    for (int i = 0; i < days.length && i < values.length; i++) {
+      final double x = stepX * i;
+      final TextPainter tp = TextPainter(
+        text: TextSpan(text: days[i], style: textStyle),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      tp.paint(canvas, Offset(x - tp.width / 2, labelY - tp.height / 2));
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _SleepChartPainter oldDelegate) {
+    return oldDelegate.values != values ||
+        oldDelegate.lineColor != lineColor ||
+        oldDelegate.dotColor != dotColor ||
+        oldDelegate.backgroundLineColor != backgroundLineColor;
+  }
+}
