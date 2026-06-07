@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:sleep_ui/FlutterFlowModifiedFiles/voice_mode_screen.dart';
 
 class SanctuaryHomePage extends StatefulWidget {
   const SanctuaryHomePage({super.key});
@@ -130,7 +131,14 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
   // -------------------- SANCTUARY CARD --------------------
 
   Widget _buildSanctuaryCard() {
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const VoiceModeScreen()),
+        );
+      },
+      child: Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 22),
       decoration: BoxDecoration(
@@ -212,8 +220,18 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
               ],
             ),
           ),
+          const SizedBox(height: 10),
+          Text(
+            'Tap to talk with SleepMate',
+            style: GoogleFonts.quicksand(
+              color: _accentYellow,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
+    ),
     );
   }
 
