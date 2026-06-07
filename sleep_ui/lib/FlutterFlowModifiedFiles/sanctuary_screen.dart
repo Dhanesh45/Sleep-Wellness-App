@@ -23,7 +23,7 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
   final Color _cardBackground = const Color(0xFF111827);
   final Color _primaryText = Colors.white;
   final Color _secondaryText = const Color(0xFF9CA3AF);
-  final Color _accentYellow = const Color(0xFFFBBF24);
+  final Color _accentYellow = const Color(0xFFFFB03A);
   final Color _accentOrange = const Color(0xFFFB923C);
   final Color _accentPink = const Color(0xFFFB7185);
   final Color _accentBlue = const Color(0xFF38BDF8);

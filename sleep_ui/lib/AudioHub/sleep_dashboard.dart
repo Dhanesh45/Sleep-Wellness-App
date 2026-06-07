@@ -15,10 +15,10 @@ class SleepDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = const Color(0xFFFCD3A1); // Accent Peach/Gold color
+    final themeColor = const Color(0xFFFFB03A); // Sanctuary accentYellow
 
     return Scaffold(
-      backgroundColor: const Color(0xFF090C10),
+      backgroundColor: const Color(0xFF050814),
       body: SafeArea(
         child: Stack(
           children: [
@@ -206,7 +206,7 @@ class SleepDashboard extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF161B22),
+                      color: const Color(0xFF111827),
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(color: Colors.white10),
                     ),
@@ -341,7 +341,7 @@ class SleepDashboard extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0F141C),
+                      color: const Color(0xFF111827),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: Colors.white10),
                     ),
@@ -399,7 +399,7 @@ class SleepDashboard extends StatelessWidget {
 
                   // Bottom Navigation Bar Layout
                   Container(
-                    color: const Color(0xFF090C10),
+                    color: const Color(0xFF050814),
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -438,7 +438,7 @@ class SleepDashboard extends StatelessWidget {
       margin: const EdgeInsets.only(right: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: isSelected ? accentColor : const Color(0xFF161B22),
+        color: isSelected ? accentColor : const Color(0xFF111827),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isSelected ? Colors.transparent : Colors.white10,
