@@ -501,105 +501,115 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
 
   // -------------------- AUDIO ZONE + CALM REGION --------------------
 
- Widget _buildAudioZoneRow() {
+  Widget _buildAudioZoneRow() {
     return Row(
       children: [
         Expanded(
           child: _buildRoundedBlobCard(
             title: 'Audio Zone',
             subtitle: 'Vibes & Sounds',
-            icon: Icons.music_note_rounded,
-            colors: const [Color(0xFFFFC44D), Color(0xFFFFAD33)],
+            icon: Icons.graphic_eq_rounded,
+            colors: const [Color(0xFF1E293B), Color(0xFF0F172A)],
+            onTap: () {
+              setState(() => _selectedBottomIndex = 3);
+            },
           ),
         ),
         const SizedBox(width: 14),
         Expanded(
           child: _buildRoundedBlobCard(
-            title: 'Calm Region',
-            subtitle: 'Breathing & Zen',
+            title: 'Remedial',
+            subtitle: 'Recipes & Zen',
             icon: Icons.spa_rounded,
-            colors: const [Color(0xFFE68868), Color(0xFFE07A5F)],
+            colors: const [Color(0xFF27272A), Color(0xFF09090B)],
+            onTap: () {
+              setState(() => _selectedBottomIndex = 4);
+            },
           ),
         ),
       ],
     );
   }
 
-Widget _buildRoundedBlobCard({
+  Widget _buildRoundedBlobCard({
     required String title,
     required String subtitle,
     required IconData icon,
     required List<Color> colors,
+    required VoidCallback onTap,
     Alignment glowAlignment = Alignment.centerRight,
   }) {
-    return Container(
-      height: 98,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        gradient: LinearGradient(
-          colors: colors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 98,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          gradient: LinearGradient(
+            colors: colors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: Stack(
-          children: [
-            Positioned(
-              right: 14,
-              top: 10,
-              child: Container(
-                width: 86,
-                height: 86,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.10),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: Stack(
+            children: [
+              Positioned(
+                right: 14,
+                top: 10,
+                child: Container(
+                  width: 86,
+                  height: 86,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.10),
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              left: 18,
-              top: 16,
-              child: Icon(
-                icon,
-                color: Colors.black.withOpacity(0.88),
-                size: 21,
-              ),
-            ),
-            Positioned(
-              left: 18,
-              right: 18,
-              top: 46,
-              child: Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.nunito(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15,
-                  height: 1.0,
+              Positioned(
+                left: 18,
+                top: 16,
+                child: Icon(
+                  icon,
+                  color: _accentYellow,
+                  size: 21,
                 ),
               ),
-            ),
-            Positioned(
-              left: 18,
-              right: 18,
-              top: 67,
-              child: Text(
-                subtitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.quicksand(
-                  color: Colors.white.withOpacity(0.80),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  height: 1.0,
+              Positioned(
+                left: 18,
+                right: 18,
+                top: 46,
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.nunito(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                    height: 1.0,
+                  ),
                 ),
               ),
-            ),
-          ],
+              Positioned(
+                left: 18,
+                right: 18,
+                top: 67,
+                child: Text(
+                  subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.quicksand(
+                    color: Colors.white.withOpacity(0.80),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    height: 1.0,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -7,10 +7,10 @@ const restoraBg = Color(0xFF0C0F14);
 const restoraCard = Color(0xFF141820);
 const restoraInput = Color(0xFF1A1F28);
 const restoraBorder = Color(0xFF2A3140);
-const restoraOrange = Color(0xFFE8A849);
-const restoraOrangeDark = Color(0xFFB87A2A);
+const restoraOrange = Color(0xFFFFB03A);
+const restoraOrangeDark = Color(0xFFC27A1C);
 const restoraMuted = Color(0xFF8B95A5);
-const restoraTabSelected = Color(0xFF2A2218);
+const restoraTabSelected = Color(0xFF2A200A);
 
 void navigateToSanctuary(BuildContext context) {
   Navigator.pushAndRemoveUntil(

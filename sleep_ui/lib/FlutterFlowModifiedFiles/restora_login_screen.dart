@@ -192,13 +192,6 @@ class _RestoraLoginScreenState extends State<RestoraLoginScreen> {
                   'Google sign-in coming soon.',
                 ),
               ),
-              const SizedBox(height: 12),
-              RestoraGoogleButton(
-                onTap: () => showRestoraMessage(
-                  context,
-                  'Google sign-in coming soon.',
-                ),
-              ),
               const SizedBox(height: 28),
               RichText(
                 textAlign: TextAlign.center,
