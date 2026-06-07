@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sleep_ui/FlutterFlowModifiedFiles/voice_mode_screen.dart';
+import 'package:sleep_ui/SleepHub/dashboard_screen.dart';
+import 'package:sleep_ui/AudioHub/sleep_dashboard.dart';
 
 class SanctuaryHomePage extends StatefulWidget {
   const SanctuaryHomePage({super.key});
@@ -33,44 +35,249 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    Widget activeTab;
+    switch (_selectedBottomIndex) {
+      case 0:
+        activeTab = _buildHomeTab();
+        break;
+      case 1:
+        activeTab = const DashboardScreen();
+        break;
+      case 2:
+        activeTab = const SleepDashboard(
+          embedded: true,
+          mode: AudioHubTabMode.storiesOnly,
+        );
+        break;
+      case 3:
+        activeTab = const SleepDashboard(
+          embedded: true,
+          mode: AudioHubTabMode.soundsOnly,
+        );
+        break;
+      case 4:
+        activeTab = _buildRemedialTab();
+        break;
+      default:
+        activeTab = _buildHomeTab();
+    }
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: _primaryBackground,
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: activeTab,
+              ),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 16,
+                child: _buildBottomNavPill(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHomeTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24).copyWith(bottom: 100),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildGreetingHeader(),
+          const SizedBox(height: 24),
+          _buildSanctuaryCard(),
+          const SizedBox(height: 20),
+          _buildSleepConsistencyCard(),
+          const SizedBox(height: 20),
+          _buildAudioZoneRow(),
+          const SizedBox(height: 24),
+          _buildSectionHeader(
+            title: 'Soothing Sounds',
+            action: 'See All',
+          ),
+          const SizedBox(height: 16),
+          _buildSoothingSoundsList(),
+          const SizedBox(height: 24),
+          _buildSectionHeader(
+            title: 'Natural Remedies',
+            trailingIcon: Icons.auto_awesome_rounded,
+          ),
+          const SizedBox(height: 16),
+          _buildRemedyCard(),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRemedialTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24).copyWith(bottom: 100),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Natural Remedies',
+            style: GoogleFonts.nunito(
+              color: _primaryText,
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Holistic recipes and routines to calm your nervous system.',
+            style: GoogleFonts.quicksand(
+              color: _secondaryText,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 24),
+          _buildRemedyCard(),
+          const SizedBox(height: 16),
+          _buildRemedyCardItem(
+            title: 'Chamomile & Lavender Tea',
+            imageUrl: 'https://images.pexels.com/photos/1638280/pexels-photo-1638280.jpeg',
+            description: 'A classic floral blend that triggers GABA receptors in the brain to reduce anxiety and promote sleepiness.',
+            time: '5 min',
+          ),
+          const SizedBox(height: 16),
+          _buildRemedyCardItem(
+            title: 'Warm Nutmeg Milk',
+            imageUrl: 'https://images.pexels.com/photos/5946609/pexels-photo-5946609.jpeg',
+            description: 'Nutmeg is rich in myristicin, which acts as a natural sedative. Best taken 30 minutes before bed.',
+            time: '8 min',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRemedyCardItem({
+    required String title,
+    required String imageUrl,
+    required String description,
+    required String time,
+  }) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: _cardBackground,
+        borderRadius: BorderRadius.circular(28),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+            child: CachedNetworkImage(
+              fadeInDuration: Duration.zero,
+              fadeOutDuration: Duration.zero,
+              imageUrl: imageUrl,
+              height: 190,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+            ).copyWith(top: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildGreetingHeader(),
-                const SizedBox(height: 24),
-                _buildSanctuaryCard(),
-                const SizedBox(height: 20),
-                _buildSleepConsistencyCard(),
-                const SizedBox(height: 20),
-                _buildAudioZoneRow(),
-                const SizedBox(height: 24),
-                _buildSectionHeader(
-                  title: 'Soothing Sounds',
-                  action: 'See All',
+                Text(
+                  title,
+                  style: GoogleFonts.nunito(
+                    color: _primaryText,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                  ),
                 ),
-                const SizedBox(height: 16),
-                _buildSoothingSoundsList(),
-                const SizedBox(height: 24),
-                _buildSectionHeader(
-                  title: 'Natural Remedies',
-                  trailingIcon: Icons.auto_awesome_rounded,
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  style: GoogleFonts.quicksand(
+                    color: _secondaryText,
+                    fontSize: 12,
+                    height: 1.5,
+                  ),
                 ),
-                const SizedBox(height: 16),
-                _buildRemedyCard(),
-                const SizedBox(height: 24),
-                _buildBottomNavPill(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(999),
+                        color: Colors.black.withOpacity(0.24),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.timer_rounded,
+                            size: 14,
+                            color: _secondaryText,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            time,
+                            style: GoogleFonts.quicksand(
+                              color: _secondaryText,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(999),
+                        color: _accentYellow.withOpacity(0.16),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Read Recipe',
+                            style: GoogleFonts.quicksand(
+                              color: _accentYellow,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 16,
+                            color: _accentYellow,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -512,119 +719,11 @@ Widget _buildRoundedBlobCard({
   // -------------------- REMEDY CARD --------------------
 
   Widget _buildRemedyCard() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: _cardBackground,
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            child: CachedNetworkImage(
-              fadeInDuration: Duration.zero,
-              fadeOutDuration: Duration.zero,
-              imageUrl:
-                  'https://images.pexels.com/photos/3735631/pexels-photo-3735631.jpeg',
-              height: 190,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-            ).copyWith(top: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Ashwagandha Tonic',
-                  style: GoogleFonts.nunito(
-                    color: _primaryText,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 18,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Known as 'Winter Cherry', this adaptogen helps the body manage stress and cortisol levels for deeper REM sleep.",
-                  style: GoogleFonts.quicksand(
-                    color: _secondaryText,
-                    fontSize: 12,
-                    height: 1.5,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(999),
-                        color: Colors.black.withOpacity(0.24),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.timer_rounded,
-                            size: 14,
-                            color: _secondaryText,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            '10 min',
-                            style: GoogleFonts.quicksand(
-                              color: _secondaryText,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(999),
-                        color: _accentYellow.withOpacity(0.16),
-                      ),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Read Recipe',
-                            style: GoogleFonts.quicksand(
-                              color: _accentYellow,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Icon(
-                            Icons.arrow_forward_rounded,
-                            size: 16,
-                            color: _accentYellow,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 18),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return _buildRemedyCardItem(
+      title: 'Ashwagandha Tonic',
+      imageUrl: 'https://images.pexels.com/photos/3735631/pexels-photo-3735631.jpeg',
+      description: "Known as 'Winter Cherry', this adaptogen helps the body manage stress and cortisol levels for deeper REM sleep.",
+      time: '10 min',
     );
   }
 
@@ -632,10 +731,11 @@ Widget _buildRoundedBlobCard({
 
   Widget _buildBottomNavPill() {
     final items = [
-      _BottomNavItem(Icons.nightlight_round_rounded, 'Sanctuary'),
-      _BottomNavItem(Icons.graphic_eq_rounded, 'Sounds'),
-      _BottomNavItem(Icons.spa_rounded, 'Detox'),
+      _BottomNavItem(Icons.home_rounded, 'Home'),
       _BottomNavItem(Icons.bedtime_rounded, 'Sleep'),
+      _BottomNavItem(Icons.auto_stories_rounded, 'Stories'),
+      _BottomNavItem(Icons.graphic_eq_rounded, 'Sounds'),
+      _BottomNavItem(Icons.spa_rounded, 'Remedial'),
     ];
 
     return Center(

@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'sleep_player.dart';
 
+enum AudioHubTabMode { full, soundsOnly, storiesOnly }
+
 class SleepDashboard extends StatelessWidget {
-  const SleepDashboard({Key? key}) : super(key: key);
+  final bool embedded;
+  final AudioHubTabMode mode;
+
+  const SleepDashboard({
+    Key? key,
+    this.embedded = false,
+    this.mode = AudioHubTabMode.full,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +23,8 @@ class SleepDashboard extends StatelessWidget {
         child: Stack(
           children: [
             SingleChildScrollView(
-              padding: const EdgeInsets.only(
-                bottom: 140,
+              padding: EdgeInsets.only(
+                bottom: embedded ? 100 : 140,
               ), // Space for mini-player and nav bar
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,57 +268,61 @@ class SleepDashboard extends StatelessWidget {
                   ),
 
                   // Media Sections
-                  _buildMediaSection('Natural Sounds', [
-                    _buildMediaCard(
-                      'Rain on Window',
-                      'Soft loop • 60m',
-                      'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=300',
-                      '20:00',
-                    ),
-                    _buildMediaCard(
-                      'Ocean Waves',
-                      'Rhythmic blend',
-                      'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=300',
-                      '15:00',
-                    ),
-                  ]),
+                  if (mode != AudioHubTabMode.storiesOnly)
+                    _buildMediaSection('Natural Sounds', [
+                      _buildMediaCard(
+                        'Rain on Window',
+                        'Soft loop • 60m',
+                        'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=300',
+                        '20:00',
+                      ),
+                      _buildMediaCard(
+                        'Ocean Waves',
+                        'Rhythmic blend',
+                        'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=300',
+                        '15:00',
+                      ),
+                    ]),
 
-                  _buildMediaSection('Bedtime Stories', [
-                    _buildMediaCard(
-                      'The Midnight Train',
-                      'Fantasy • 22 min',
-                      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=300',
-                      'Stephen Fry',
-                      isStory: true,
-                    ),
-                    _buildMediaCard(
-                      'Ocean\'s Whisper',
-                      'Adventure • 35 min',
-                      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=300',
-                      'Eva Green',
-                      isStory: true,
-                    ),
-                  ]),
+                  if (mode != AudioHubTabMode.soundsOnly)
+                    _buildMediaSection('Bedtime Stories', [
+                      _buildMediaCard(
+                        'The Midnight Train',
+                        'Fantasy • 22 min',
+                        'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=300',
+                        'Stephen Fry',
+                        isStory: true,
+                      ),
+                      _buildMediaCard(
+                        'Ocean\'s Whisper',
+                        'Adventure • 35 min',
+                        'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=300',
+                        'Eva Green',
+                        isStory: true,
+                      ),
+                    ]),
 
-                  _buildMediaSection('Sleep Podcasts', [
-                    _buildMediaCard(
-                      'Sleep Better Tonight',
-                      'Dr. Aris Thorne',
-                      'https://images.unsplash.com/photo-1516280440614-37939bbacd6a?w=300',
-                      '',
-                    ),
-                    _buildMediaCard(
-                      'Science of Sleep',
-                      'NeuroHub Studios',
-                      'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300',
-                      '',
-                    ),
-                  ]),
+                  if (mode == AudioHubTabMode.full)
+                    _buildMediaSection('Sleep Podcasts', [
+                      _buildMediaCard(
+                        'Sleep Better Tonight',
+                        'Dr. Aris Thorne',
+                        'https://images.unsplash.com/photo-1516280440614-37939bbacd6a?w=300',
+                        '',
+                      ),
+                      _buildMediaCard(
+                        'Science of Sleep',
+                        'NeuroHub Studios',
+                        'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300',
+                        '',
+                      ),
+                    ]),
                 ],
               ),
             ),
 
             // Persistent Mini Player and Bottom Navigation Overlay Bar
+            if (!embedded)
             Positioned(
               bottom: 0,
               left: 0,
