@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -46,12 +47,14 @@ class _VoiceModeScreenState extends State<VoiceModeScreen>
 
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 2000),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.92, end: 1.08).animate(
+    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
+
+    _animationController.repeat(reverse: true);
   }
 
   Future<void> _setupTts() async {
@@ -105,15 +108,22 @@ class _VoiceModeScreenState extends State<VoiceModeScreen>
   }
 
   void _syncOrbAnimation() {
-    final shouldAnimate = _state != VoiceState.idle;
-    if (shouldAnimate) {
-      if (!_animationController.isAnimating) {
-        _animationController.repeat(reverse: true);
-      }
-    } else {
-      _animationController.stop();
-      _animationController.reset();
+    if (!mounted) return;
+    switch (_state) {
+      case VoiceState.idle:
+        _animationController.duration = const Duration(milliseconds: 2000);
+        break;
+      case VoiceState.listening:
+        _animationController.duration = const Duration(milliseconds: 800);
+        break;
+      case VoiceState.thinking:
+        _animationController.duration = const Duration(milliseconds: 600);
+        break;
+      case VoiceState.speaking:
+        _animationController.duration = const Duration(milliseconds: 1200);
+        break;
     }
+    _animationController.repeat(reverse: true);
   }
 
   @override
@@ -127,30 +137,55 @@ class _VoiceModeScreenState extends State<VoiceModeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+    final busy = _state == VoiceState.thinking || _state == VoiceState.speaking;
+
     return Scaffold(
       backgroundColor: SanctuaryTheme.primaryBackground,
       body: SafeArea(
         child: Column(
           children: [
             _buildHeader(),
-            const SizedBox(height: 12),
-            Text(
-              _statusText,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.quicksand(
-                color: SanctuaryTheme.secondaryText,
-                fontSize: 14,
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: Text(
+                  _statusText,
+                  key: ValueKey<String>(_statusText),
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.quicksand(
+                    color: _statusText.contains('error') || _statusText.contains('failed')
+                        ? SanctuaryTheme.accentPink
+                        : SanctuaryTheme.secondaryText,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
-            const Spacer(),
-            _buildAnimatedOrb(),
-            const SizedBox(height: 28),
-            _buildInputField(),
-            const SizedBox(height: 16),
-            _buildConversationPreview(),
-            const Spacer(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (!isKeyboardOpen) ...[
+                      const SizedBox(height: 20),
+                      _buildAnimatedOrb(),
+                      const SizedBox(height: 32),
+                    ],
+                    _buildInputField(busy),
+                    const SizedBox(height: 16),
+                    _buildConversationPreview(),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
             _buildControls(),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -199,7 +234,7 @@ class _VoiceModeScreenState extends State<VoiceModeScreen>
     final Color baseColor;
     switch (_state) {
       case VoiceState.idle:
-        baseColor = SanctuaryTheme.secondaryText;
+        baseColor = SanctuaryTheme.accentYellow;
       case VoiceState.listening:
         baseColor = SanctuaryTheme.accentBlue;
       case VoiceState.thinking:
@@ -208,56 +243,120 @@ class _VoiceModeScreenState extends State<VoiceModeScreen>
         baseColor = SanctuaryTheme.accentOrange;
     }
 
-    final shouldAnimate = _state != VoiceState.idle;
-    final scale = shouldAnimate ? _scaleAnimation.value : 1.0;
+    final scale = _scaleAnimation.value;
 
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: scale,
-          child: Container(
-            width: 200,
-            height: 200,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  baseColor.withValues(alpha: 0.25),
-                  baseColor.withValues(alpha: 0.85),
-                ],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: baseColor.withValues(alpha: 0.45),
-                  blurRadius: 36,
-                  spreadRadius: 8,
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            // Outer pulse ring 2
+            Transform.scale(
+              scale: scale * 1.25,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: baseColor.withValues(alpha: 0.03),
+                  border: Border.all(
+                    color: baseColor.withValues(alpha: 0.1),
+                    width: 1.5,
+                  ),
                 ),
-              ],
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.nightlight_round,
-                size: 80,
-                color: SanctuaryTheme.primaryText,
               ),
             ),
-          ),
+            // Outer pulse ring 1
+            Transform.scale(
+              scale: scale * 1.12,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: baseColor.withValues(alpha: 0.07),
+                  border: Border.all(
+                    color: baseColor.withValues(alpha: 0.22),
+                    width: 1.5,
+                  ),
+                ),
+              ),
+            ),
+            // Main glowing orb
+            Transform.scale(
+              scale: scale,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      baseColor.withValues(alpha: 0.8),
+                      baseColor.withValues(alpha: 0.2),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.3, 0.8, 1.0],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: baseColor.withValues(alpha: 0.35),
+                      blurRadius: 40,
+                      spreadRadius: 4,
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: ClipOval(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                      child: Container(
+                        width: 130,
+                        height: 130,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withValues(alpha: 0.06),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.nightlight_round,
+                            size: 64,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         );
       },
     );
   }
 
-  Widget _buildInputField() {
+  Widget _buildInputField(bool busy) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: TextField(
         controller: _inputCtrl,
-        enabled: _state != VoiceState.thinking && _state != VoiceState.speaking,
+        enabled: !busy,
         style: GoogleFonts.quicksand(
           color: SanctuaryTheme.primaryText,
           fontSize: 14,
         ),
+        onSubmitted: (val) {
+          final text = val.trim();
+          if (text.isNotEmpty && !busy) {
+            _processUserMessage(text);
+          }
+        },
         decoration: InputDecoration(
           hintText: 'Type how you feel, or tap Talk to use voice...',
           hintStyle: GoogleFonts.quicksand(
@@ -268,6 +367,21 @@ class _VoiceModeScreenState extends State<VoiceModeScreen>
           fillColor: SanctuaryTheme.cardBackground,
           prefixIcon: const Icon(Icons.edit_note_rounded,
               color: SanctuaryTheme.accentYellow, size: 22),
+          suffixIcon: ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _inputCtrl,
+            builder: (context, value, child) {
+              if (value.text.trim().isEmpty) return const SizedBox.shrink();
+              return IconButton(
+                icon: const Icon(Icons.send_rounded, color: SanctuaryTheme.accentYellow, size: 20),
+                onPressed: busy ? null : () {
+                  final text = _inputCtrl.text.trim();
+                  if (text.isNotEmpty) {
+                    _processUserMessage(text);
+                  }
+                },
+              );
+            },
+          ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
             borderSide: const BorderSide(color: SanctuaryTheme.border),
@@ -430,6 +544,7 @@ class _VoiceModeScreenState extends State<VoiceModeScreen>
   }
 
   Future<void> _processUserMessage(String userText) async {
+    _inputCtrl.clear();
     setState(() {
       _state = VoiceState.thinking;
       _statusText = 'SleepMate is thinking...';
@@ -440,21 +555,26 @@ class _VoiceModeScreenState extends State<VoiceModeScreen>
     try {
       final reply = await _gemini!.generateReply(userText);
 
+      if (!mounted) return;
       setState(() => _lastBotText = reply);
 
-      await SupabaseService.instance.saveAssistantSession(
-        userMessage: userText,
-        detectedMood: _guessMood(userText),
-        assistantReply: reply,
-        suggestedAction: _guessAction(userText),
-      );
+      try {
+        await SupabaseService.instance.saveAssistantSession(
+          userMessage: userText,
+          detectedMood: _guessMood(userText),
+          assistantReply: reply,
+          suggestedAction: _guessAction(userText),
+        );
+      } catch (dbError) {
+        debugPrint('Failed to save session to Supabase: $dbError');
+      }
 
       await _speak(reply);
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _state = VoiceState.idle;
-        _statusText = 'Gemini error: $e';
+        _statusText = 'Assistant error: $e';
       });
       _syncOrbAnimation();
     }

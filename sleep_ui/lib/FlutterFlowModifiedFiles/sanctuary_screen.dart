@@ -69,9 +69,7 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
         body: SafeArea(
           child: Stack(
             children: [
-              Positioned.fill(
-                child: activeTab,
-              ),
+              Positioned.fill(child: activeTab),
               Positioned(
                 left: 0,
                 right: 0,
@@ -87,7 +85,10 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
 
   Widget _buildHomeTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24).copyWith(bottom: 100),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 24,
+        vertical: 24,
+      ).copyWith(bottom: 100),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -99,10 +100,7 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
           const SizedBox(height: 20),
           _buildAudioZoneRow(),
           const SizedBox(height: 24),
-          _buildSectionHeader(
-            title: 'Soothing Sounds',
-            action: 'See All',
-          ),
+          _buildSectionHeader(title: 'Soothing Sounds', action: 'See All'),
           const SizedBox(height: 16),
           _buildSoothingSoundsList(),
           const SizedBox(height: 24),
@@ -120,7 +118,10 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
 
   Widget _buildRemedialTab() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24).copyWith(bottom: 100),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 24,
+        vertical: 24,
+      ).copyWith(bottom: 100),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -135,25 +136,26 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
           const SizedBox(height: 8),
           Text(
             'Holistic recipes and routines to calm your nervous system.',
-            style: GoogleFonts.quicksand(
-              color: _secondaryText,
-              fontSize: 14,
-            ),
+            style: GoogleFonts.quicksand(color: _secondaryText, fontSize: 14),
           ),
           const SizedBox(height: 24),
           _buildRemedyCard(),
           const SizedBox(height: 16),
           _buildRemedyCardItem(
             title: 'Chamomile & Lavender Tea',
-            imageUrl: 'https://images.pexels.com/photos/1638280/pexels-photo-1638280.jpeg',
-            description: 'A classic floral blend that triggers GABA receptors in the brain to reduce anxiety and promote sleepiness.',
+            imageUrl:
+                'https://images.pexels.com/photos/1638280/pexels-photo-1638280.jpeg',
+            description:
+                'A classic floral blend that triggers GABA receptors in the brain to reduce anxiety and promote sleepiness.',
             time: '5 min',
           ),
           const SizedBox(height: 16),
           _buildRemedyCardItem(
             title: 'Warm Nutmeg Milk',
-            imageUrl: 'https://images.pexels.com/photos/5946609/pexels-photo-5946609.jpeg',
-            description: 'Nutmeg is rich in myristicin, which acts as a natural sedative. Best taken 30 minutes before bed.',
+            imageUrl:
+                'https://images.pexels.com/photos/5946609/pexels-photo-5946609.jpeg',
+            description:
+                'Nutmeg is rich in myristicin, which acts as a natural sedative. Best taken 30 minutes before bed.',
             time: '8 min',
           ),
         ],
@@ -313,24 +315,6 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
             ],
           ),
         ),
-        const SizedBox(width: 16),
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
-          ),
-          child: ClipOval(
-            child: CachedNetworkImage(
-              fadeInDuration: Duration.zero,
-              fadeOutDuration: Duration.zero,
-              imageUrl:
-                  'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg',
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -346,99 +330,99 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
         );
       },
       child: Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 22),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF111827), Color(0xFF020617)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(32),
+          gradient: const LinearGradient(
+            colors: [Color(0xFF111827), Color(0xFF020617)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            height: 140,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                ClipRect(
-                  child: ImageFiltered(
-                    imageFilter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-                    child: Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [
-                            _accentOrange.withOpacity(0.25),
-                            Colors.transparent,
-                          ],
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 120,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  ClipRect(
+                    child: ImageFiltered(
+                      imageFilter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+                      child: Container(
+                        width: 200,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: [
+                              _accentOrange.withOpacity(0.25),
+                              Colors.transparent,
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Lottie.asset(
-                  'assets/lottie/campfire.json',
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.contain,
-                  repeat: true,
-                  animate: true,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Your sanctuary is warm',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.nunito(
-              color: _primaryText,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.32),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.shield_rounded, size: 16, color: _accentBlue),
-                const SizedBox(width: 8),
-                Text(
-                  'Shield Active',
-                  style: GoogleFonts.quicksand(
-                    color: _primaryText,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                  Lottie.asset(
+                    'assets/lottie/campfire.json',
+                    width: 280,
+                    height: 280,
+                    fit: BoxFit.contain,
+                    repeat: true,
+                    animate: true,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Tap to talk with SleepMate',
-            style: GoogleFonts.quicksand(
-              color: _accentYellow,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+            const SizedBox(height: 0),
+            Text(
+              'Your sanctuary is warm',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.nunito(
+                color: _primaryText,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                height: 1.4,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.32),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.shield_rounded, size: 16, color: _accentBlue),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Shield Active',
+                    style: GoogleFonts.quicksand(
+                      color: _primaryText,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Tap to talk with SleepMate',
+              style: GoogleFonts.quicksand(
+                color: _accentYellow,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
     );
   }
 
@@ -509,7 +493,7 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
             title: 'Audio Zone',
             subtitle: 'Vibes & Sounds',
             icon: Icons.graphic_eq_rounded,
-            colors: const [Color(0xFF1E293B), Color(0xFF0F172A)],
+            colors: const [Color(0xFF5F431A), Color(0xFF2A1B07)],
             onTap: () {
               setState(() => _selectedBottomIndex = 3);
             },
@@ -521,7 +505,7 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
             title: 'Remedial',
             subtitle: 'Recipes & Zen',
             icon: Icons.spa_rounded,
-            colors: const [Color(0xFF27272A), Color(0xFF09090B)],
+            colors: const [Color(0xFF5A1818), Color(0xFF280707)],
             onTap: () {
               setState(() => _selectedBottomIndex = 4);
             },
@@ -570,11 +554,7 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
               Positioned(
                 left: 18,
                 top: 16,
-                child: Icon(
-                  icon,
-                  color: _accentYellow,
-                  size: 21,
-                ),
+                child: Icon(icon, color: _accentYellow, size: 21),
               ),
               Positioned(
                 left: 18,
@@ -731,8 +711,10 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
   Widget _buildRemedyCard() {
     return _buildRemedyCardItem(
       title: 'Ashwagandha Tonic',
-      imageUrl: 'https://images.pexels.com/photos/3735631/pexels-photo-3735631.jpeg',
-      description: "Known as 'Winter Cherry', this adaptogen helps the body manage stress and cortisol levels for deeper REM sleep.",
+      imageUrl:
+          'https://images.pexels.com/photos/3735631/pexels-photo-3735631.jpeg',
+      description:
+          "Known as 'Winter Cherry', this adaptogen helps the body manage stress and cortisol levels for deeper REM sleep.",
       time: '10 min',
     );
   }
@@ -831,26 +813,32 @@ class _SleepChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint bgPaint = Paint()
-      ..color = backgroundLineColor
-      ..strokeWidth = 1.5
-      ..style = PaintingStyle.stroke;
-
-    final Paint linePaint = Paint()
-      ..color = lineColor
-      ..strokeWidth = 2.5
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final Paint dotPaint = Paint()
-      ..color = dotColor
-      ..style = PaintingStyle.fill;
-
     const double minH = 4;
     const double maxH = 9;
+    final double baselineY = size.height * 0.76;
 
-    // baseline
-    final double baselineY = size.height * 0.75;
+    // 1. Draw horizontal gridlines (faint guides)
+    final Paint gridPaint = Paint()
+      ..color = Colors.white.withOpacity(0.04)
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
+
+    canvas.drawLine(
+      Offset(0, size.height * 0.22),
+      Offset(size.width, size.height * 0.22),
+      gridPaint,
+    );
+    canvas.drawLine(
+      Offset(0, size.height * 0.49),
+      Offset(size.width, size.height * 0.49),
+      gridPaint,
+    );
+
+    // Baseline guide
+    final Paint bgPaint = Paint()
+      ..color = backgroundLineColor
+      ..strokeWidth = 1.2
+      ..style = PaintingStyle.stroke;
     canvas.drawLine(
       Offset(0, baselineY),
       Offset(size.width, baselineY),
@@ -862,28 +850,80 @@ class _SleepChartPainter extends CustomPainter {
     final double stepX = values.length > 1
         ? size.width / (values.length - 1)
         : 0;
-    final Path path = Path();
 
+    // Generate data points
+    final List<Offset> points = [];
     for (int i = 0; i < values.length; i++) {
       final double t = (values[i] - minH) / (maxH - minH);
       final double x = stepX * i;
-      final double y = size.height - (t * size.height * 0.8);
-
-      if (i == 0) {
-        path.moveTo(x, y);
-      } else {
-        path.lineTo(x, y);
-      }
-
-      canvas.drawCircle(Offset(x, y), 4, dotPaint);
+      final double y = baselineY - (t * size.height * 0.58);
+      points.add(Offset(x, y));
     }
 
-    canvas.drawPath(path, linePaint);
+    // 2. Generate smooth curve path
+    final Path curvePath = Path();
+    if (points.isNotEmpty) {
+      curvePath.moveTo(points[0].dx, points[0].dy);
+      for (int i = 0; i < points.length - 1; i++) {
+        final Offset p1 = points[i];
+        final Offset p2 = points[i + 1];
+        final double controlX = p1.dx + (p2.dx - p1.dx) / 2;
+        curvePath.cubicTo(controlX, p1.dy, controlX, p2.dy, p2.dx, p2.dy);
+      }
+    }
 
-    // weekday labels
+    // 3. Draw gradient area fill under the curve
+    if (points.isNotEmpty) {
+      final Path fillPath = Path.from(curvePath);
+      fillPath.lineTo(points.last.dx, baselineY);
+      fillPath.lineTo(points.first.dx, baselineY);
+      fillPath.close();
+
+      final Paint fillPaint = Paint()
+        ..shader =
+            LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                lineColor.withOpacity(0.18),
+                lineColor.withOpacity(0.00),
+              ],
+            ).createShader(
+              Rect.fromLTRB(0, size.height * 0.1, size.width, baselineY),
+            )
+        ..style = PaintingStyle.fill;
+      canvas.drawPath(fillPath, fillPaint);
+    }
+
+    // 4. Draw main smooth curve stroke
+    final Paint linePaint = Paint()
+      ..color = lineColor
+      ..strokeWidth = 2.5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    canvas.drawPath(curvePath, linePaint);
+
+    // 5. Draw glowing data points
+    final Paint outerDotPaint = Paint()
+      ..color = dotColor.withOpacity(0.24)
+      ..style = PaintingStyle.fill;
+    final Paint innerDotPaint = Paint()
+      ..color = dotColor
+      ..style = PaintingStyle.fill;
+
+    for (final Offset pt in points) {
+      canvas.drawCircle(pt, 5.5, outerDotPaint);
+      canvas.drawCircle(pt, 2.5, innerDotPaint);
+    }
+
+    // 6. Weekday labels at the bottom
     const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    final textStyle = TextStyle(color: backgroundLineColor, fontSize: 10);
-    final double labelY = size.height - 2;
+    final textStyle = TextStyle(
+      color: lineColor.withOpacity(0.35),
+      fontSize: 10,
+      fontWeight: FontWeight.w500,
+    );
+    final double labelY = size.height - 5;
 
     for (int i = 0; i < days.length && i < values.length; i++) {
       final double x = stepX * i;
