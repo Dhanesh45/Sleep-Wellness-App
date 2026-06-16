@@ -73,6 +73,7 @@ flutter:
     - assets/sounds/ocean waves.mp3
     - assets/sounds/rain.mp3
     - .env
+    - assets/images/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

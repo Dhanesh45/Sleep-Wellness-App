@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:sleep_ui/FlutterFlowModifiedFiles/voice_mode_screen.dart';
 import 'package:sleep_ui/SleepHub/dashboard_screen.dart';
 import 'package:sleep_ui/AudioHub/sleep_dashboard.dart';
+import 'package:sleep_ui/story/screens/stories_screen.dart';
 
 class SanctuaryHomePage extends StatefulWidget {
   const SanctuaryHomePage({super.key});
@@ -44,10 +45,7 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
         activeTab = const DashboardScreen();
         break;
       case 2:
-        activeTab = const SleepDashboard(
-          embedded: true,
-          mode: AudioHubTabMode.storiesOnly,
-        );
+        activeTab = const StoriesScreen();
         break;
       case 3:
         activeTab = const SleepDashboard(

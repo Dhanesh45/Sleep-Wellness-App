@@ -13,6 +13,7 @@ import 'package:sleep_ui/screens/sleep_calculator_screen.dart';
 import 'package:sleep_ui/FlutterFlowModifiedFiles/DeepSleepAudioPlayer.dart';
 import 'package:sleep_ui/FlutterFlowModifiedFiles/sanctuary_screen.dart';
 import 'package:sleep_ui/FlutterFlowModifiedFiles/voice_mode_screen.dart';
+import 'package:sleep_ui/story/screens/stories_screen.dart';
 
 // --- NEW BASE PAGE FOR TESTING SCREENS ---
 class BaseNavigationPage extends StatelessWidget {
@@ -65,6 +66,11 @@ class BaseNavigationPage extends StatelessWidget {
                 context,
                 'Deep Sleep Audio Player',
                 DeepSleepAudioPlayer(),
+              ),
+              _buildNavButton(
+                context,
+                'Sleep Stories (Localized)',
+                const StoriesScreen(),
               ),
             ],
           ),
