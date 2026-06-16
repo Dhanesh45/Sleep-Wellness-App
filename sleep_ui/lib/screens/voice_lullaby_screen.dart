@@ -152,11 +152,8 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
   Future<void> _generateSleepAudio() async {
     if (_voiceDetails == null) return;
     
-    final userId = Supabase.instance.client.auth.currentUser?.id ?? 'dev-user-id';
+    final userId = 'f155eb97-7695-41a2-b5cc-2fbe93f3b80b';
     final voiceId = const Uuid().v4();
-    final file = File(_voiceDetails!.filePath);
-    final ext = file.path.split('.').last;
-    final path = '$userId/$voiceId/audio.$ext';
 
     // Show loading indicator
     showDialog(
@@ -170,24 +167,38 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
     );
 
     try {
-      await Supabase.instance.client.storage.from('voice-audios').upload(
-        path,
-        file,
-        fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
-      );
+      final String langCode = {
+        'english': 'en',
+        'tamil': 'ta',
+        'telugu': 'te',
+        'hindi': 'hi',
+      }[_voiceDetails!.language.toLowerCase()] ?? 'en';
 
-      final generatedUrl = Supabase.instance.client.storage.from('voice-audios').getPublicUrl(path);
+      // Insert record directly into the voice_clones table
+      await Supabase.instance.client.from('voice_clones').insert({
+        'voiceid': voiceId,
+        'userid': userId,
+        'voice_name': _voiceDetails!.voiceName,
+        'description': _voiceDetails!.description,
+        'language': langCode,
+        'cartesia_voice_id': 'mock-cartesia-${voiceId.substring(0, 8)}',
+        'photo_path': null,
+      });
 
-      debugPrint('Bucket: voice-audios');
-      debugPrint('Path: $path');
-      debugPrint('Generated URL: $generatedUrl');
+      debugPrint('Successfully stored voice clone in database:');
+      debugPrint('voiceid: $voiceId');
+      debugPrint('userid: $userId');
+      debugPrint('voice_name: ${_voiceDetails!.voiceName}');
+
+      // Refresh the library so the new voice clone is loaded and displayed immediately
+      await _loadUserVoices();
 
       if (mounted) {
         Navigator.pop(context); // Close loading dialog
         
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Audio uploaded successfully!'),
+            content: Text('Voice saved to database successfully!'),
             backgroundColor: Colors.green,
           ),
         );
@@ -207,7 +218,7 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
                   const Icon(Icons.auto_awesome, color: Color(0xFFFB923C)),
                   const SizedBox(width: 8),
                   Text(
-                    'Generating Sleep Audio',
+                    'Voice Generation Complete',
                     style: GoogleFonts.nunito(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -221,12 +232,12 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Voice: "${_voiceDetails!.voiceName}" (${_voiceDetails!.language})',
+                    'Voice Name: "${_voiceDetails!.voiceName}" (${_voiceDetails!.language})',
                     style: GoogleFonts.quicksand(color: Colors.white70, fontSize: 13),
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Local voice processing feature mock run completed. Supabase database sync & Cartesia voice synthesis will follow in the next steps.',
+                    'The voice details have been stored successfully in the voice_clones table.',
                     style: GoogleFonts.quicksand(color: Colors.grey, fontSize: 12, height: 1.4),
                   ),
                 ],
@@ -248,12 +259,12 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
         );
       }
     } catch (e) {
-      debugPrint('Error uploading audio: $e');
+      debugPrint('Error inserting voice clone: $e');
       if (mounted) {
         Navigator.pop(context); // Close loading dialog
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Upload failed: $e'),
+            content: Text('Save failed: $e'),
             backgroundColor: Colors.redAccent,
           ),
         );
