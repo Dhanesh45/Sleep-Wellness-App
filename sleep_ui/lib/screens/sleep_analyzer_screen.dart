@@ -263,6 +263,7 @@ class SleepAnalyzerScreen extends StatelessWidget {
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
+                          reservedSize: 32,
                           getTitlesWidget: (value, meta) {
                             const days = [
                               "S",
@@ -279,12 +280,13 @@ class SleepAnalyzerScreen extends StatelessWidget {
                             }
 
                             return Padding(
-                              padding: const EdgeInsets.only(top: 12),
+                              padding: const EdgeInsets.only(top: 6),
                               child: Text(
                                 days[value.toInt()],
                                 style: const TextStyle(
                                   color: Colors.white54,
                                   fontWeight: FontWeight.w600,
+                                  fontSize: 12,
                                 ),
                               ),
                             );
@@ -408,6 +410,7 @@ class SleepAnalyzerScreen extends StatelessWidget {
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
+            reservedSize: 32,
             getTitlesWidget: (value, meta) {
               const weeks = [
                 "W1",
@@ -422,12 +425,13 @@ class SleepAnalyzerScreen extends StatelessWidget {
               }
 
               return Padding(
-                padding: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.only(top: 6),
                 child: Text(
                   weeks[value.toInt()],
                   style: const TextStyle(
                     color: Colors.white54,
                     fontWeight: FontWeight.w600,
+                    fontSize: 12,
                   ),
                 ),
               );
