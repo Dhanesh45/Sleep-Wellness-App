@@ -6,7 +6,9 @@ import 'package:lottie/lottie.dart';
 import 'package:sleep_ui/FlutterFlowModifiedFiles/voice_mode_screen.dart';
 import 'package:sleep_ui/SleepHub/dashboard_screen.dart';
 import 'package:sleep_ui/AudioHub/sleep_dashboard.dart';
+import 'package:sleep_ui/screens/sleep_analyzer_screen.dart';
 import 'package:sleep_ui/story/screens/stories_screen.dart';
+import 'package:sleep_ui/screens/remedy_screen.dart';
 
 class SanctuaryHomePage extends StatefulWidget {
   const SanctuaryHomePage({super.key});
@@ -42,7 +44,7 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
         activeTab = _buildHomeTab();
         break;
       case 1:
-        activeTab = const DashboardScreen();
+        activeTab = SleepAnalyzerScreen();
         break;
       case 2:
         activeTab = const StoriesScreen();
@@ -54,7 +56,7 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
         );
         break;
       case 4:
-        activeTab = _buildRemedialTab();
+        activeTab = const SleepRemedyScreen();
         break;
       default:
         activeTab = _buildHomeTab();
