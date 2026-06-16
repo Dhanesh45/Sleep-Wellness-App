@@ -419,6 +419,30 @@ class _SleepCalculatorScreenState extends State<SleepCalculatorScreen>
                   ),
                 ),
                 const SizedBox(height: 12),
+
+                // ── Page links: Sleep Analyzer / Remedies ─────
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/analyzer');
+                        },
+                        child: const Text('Sleep Analyzer'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/remedy');
+                        },
+                        child: const Text('Remedies'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
               ],
             ),
           ),
