@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'sleep_player.dart';
+import 'mini_player.dart';
 
 enum AudioHubTabMode { full, soundsOnly, storiesOnly }
 
@@ -41,30 +42,25 @@ class _SleepDashboardState extends State<SleepDashboard> {
 
   // Logic to play sound from Supabase
   Future<void> _playNaturalSound(String soundFileName) async {
-    try {
-      if (soundFileName.isEmpty) return;
+    setState(() {
+      _currentlyPlaying = soundFileName.replaceAll('_', ' ').toUpperCase();
+    });
 
-      // Stop current sound to clear buffer before switching
+    print("CURRENT TRACK = $_currentlyPlaying");
+
+    try {
       await _player.stop();
 
-      // Construct the full URL
       final String fullUrl = '$supabaseBaseUrl$soundFileName.mp3';
+
+      print(fullUrl);
 
       await _player.setUrl(fullUrl);
       await _player.setLoopMode(LoopMode.all);
 
-      setState(() {
-        _currentlyPlaying = soundFileName.replaceAll('_', ' ').toUpperCase();
-      });
-
       _player.play();
     } catch (e) {
-      debugPrint("Error loading audio from Supabase: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: Could not load $soundFileName")),
-        );
-      }
+      print("AUDIO ERROR: $e");
     }
   }
 
@@ -81,7 +77,8 @@ class _SleepDashboardState extends State<SleepDashboard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildHeader(),
-                  _buildTagsRow(),
+                  const SizedBox(height: 20),
+                  _buildTwilightBanner(context),
                   const SizedBox(height: 20),
                   _buildHeroBanner(context),
                   const SizedBox(height: 20),
@@ -170,7 +167,7 @@ class _SleepDashboardState extends State<SleepDashboard> {
                       _buildMediaCard(
                         'River Stream',
                         'Running water',
-                        'https://images.unsplash.com/photo-1437333306198-0970d59404f1?w=300',
+                        'https://images.unsplash.com/photo-1599419218253-a986de6c1b3b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8cml2ZXIlMjBzdHJlYW18ZW58MHx8MHx8fDA%3D',
                         'river_stream',
                       ),
                       _buildMediaCard(
@@ -264,26 +261,18 @@ class _SleepDashboardState extends State<SleepDashboard> {
     );
   }
 
-  Widget _buildTagsRow() {
-    return SizedBox(
-      height: 40,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: [
-          _buildCategoryChip('😌 Relax', isSelected: true),
-          _buildCategoryChip('🌧️ Rainy'),
-          _buildCategoryChip('🌲 Nature'),
-        ],
-      ),
-    );
-  }
-
   Widget _buildHeroBanner(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const SleepPlayer()),
+        MaterialPageRoute(
+          builder: (_) => const SleepPlayer(
+            title: 'Ocean Dreams',
+            assetPath: 'assets/sounds/ocean dreams.mp3',
+            imageUrl:
+                'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500',
+          ),
+        ),
       ),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -324,7 +313,81 @@ class _SleepDashboardState extends State<SleepDashboard> {
                       ),
                     ),
                     Text(
-                      '5 minutes',
+                      'Sleep Collection • 0:33',
+                      style: TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              CircleAvatar(
+                radius: 24,
+                backgroundColor: themeColor,
+                child: const Icon(
+                  Icons.play_arrow,
+                  color: Colors.black,
+                  size: 28,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTwilightBanner(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const SleepPlayer(
+            title: 'Twilight Memories',
+            assetPath: 'assets/sounds/twilight memories.mp3',
+            imageUrl:
+                'https://images.unsplash.com/photo-1562767372-9927992b5f11?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fHR3aWxpZ2h0JTIwc2t5fGVufDB8fDB8fHww',
+          ),
+        ),
+      ),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        height: 180,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          image: const DecorationImage(
+            image: NetworkImage(
+              'https://images.unsplash.com/photo-1562767372-9927992b5f11?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fHR3aWxpZ2h0JTIwc2t5fGVufDB8fDB8fHww',
+            ),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+            ),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Twilight Memories',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'Sleep Collection • 1:29',
                       style: TextStyle(color: Colors.white70, fontSize: 12),
                     ),
                   ],
@@ -455,78 +518,17 @@ class _SleepDashboardState extends State<SleepDashboard> {
         mainAxisSize: MainAxisSize.min,
         children: [
           // --- SPOTIFY STYLE MINI PLAYER ---
-          GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const SleepPlayer()),
-            ),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1A1D29),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
-                    blurRadius: 10,
-                  ),
-                ],
-                border: Border.all(color: Colors.white.withOpacity(0.05)),
-              ),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: Image.network(
-                      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=100',
-                      height: 40,
-                      width: 40,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          _currentlyPlaying == "None"
-                              ? "Not Playing"
-                              : _currentlyPlaying,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const Text(
-                          "Sanctuary Audio",
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ),
-                  StreamBuilder<PlayerState>(
-                    stream: _player.playerStateStream,
-                    builder: (context, snapshot) {
-                      final playing = snapshot.data?.playing ?? false;
-                      return IconButton(
-                        icon: Icon(
-                          playing ? Icons.pause : Icons.play_arrow,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                        onPressed: () =>
-                            playing ? _player.pause() : _player.play(),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
+          MiniPlayer(
+            player: _player,
+            currentTrack: _currentlyPlaying,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SleepPlayer(title: _currentlyPlaying),
+                ),
+              );
+            },
           ),
 
           // --- NAVBAR ---

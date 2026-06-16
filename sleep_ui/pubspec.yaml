@@ -75,8 +75,7 @@ flutter:
   assets:
     - assets/lottie/
     - assets/sounds/ocean dreams.mp3
-    - assets/sounds/ocean waves.mp3
-    - assets/sounds/rain.mp3
+    - assets/sounds/twilight memories.mp3
     - .env
     - assets/images/
   #   - images/a_dot_burr.jpeg
