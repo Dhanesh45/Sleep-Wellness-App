@@ -153,8 +153,9 @@ class _StoryAudioPlayerScreenState extends State<StoryAudioPlayerScreen> {
   }
 
   String _getAudioUrl(String path) {
-    if (path.startsWith('http')) return path;
-    return Supabase.instance.client.storage.from('story-audios').getPublicUrl(path);
+    if (path.startsWith('http')) return Uri.parse(path).toString();
+    final rawUrl = Supabase.instance.client.storage.from('story-audios').getPublicUrl(path);
+    return Uri.parse(rawUrl).toString();
   }
 
   Future<void> _initDataAndPlayer() async {
@@ -178,24 +179,32 @@ class _StoryAudioPlayerScreenState extends State<StoryAudioPlayerScreen> {
       }
       _story = StoryTemplate.fromMap(storyData);
 
-      // 2. Fetch selected voice details
-      final voiceData = await Supabase.instance.client
-          .from('voice_clones')
-          .select('*')
-          .eq('voiceid', widget.voiceid)
-          .maybeSingle();
+      // 2. Fetch selected voice details (skip if 'system' — not a valid UUID)
+      if (widget.voiceid != 'system') {
+        final voiceData = await Supabase.instance.client
+            .from('voice_clones')
+            .select('*')
+            .eq('voiceid', widget.voiceid)
+            .maybeSingle();
 
-      if (voiceData != null) {
-        _voice = VoiceClone.fromMap(voiceData);
+        if (voiceData != null) {
+          _voice = VoiceClone.fromMap(voiceData);
+        }
       }
 
       // 3. Fetch matching audio version
-      final audioData = await Supabase.instance.client
+      var audioQuery = Supabase.instance.client
           .from('story_audio_versions')
           .select('audio_path')
-          .eq('storyid', widget.storyid)
-          .eq('voiceid', widget.voiceid)
-          .maybeSingle();
+          .eq('storyid', widget.storyid);
+
+      if (widget.voiceid == 'system') {
+        audioQuery = audioQuery.isFilter('voiceid', null);
+      } else {
+        audioQuery = audioQuery.eq('voiceid', widget.voiceid);
+      }
+
+      final audioData = await audioQuery.maybeSingle();
 
       if (audioData != null && audioData['audio_path'] != null) {
         _audioPath = audioData['audio_path'].toString();
@@ -203,11 +212,14 @@ class _StoryAudioPlayerScreenState extends State<StoryAudioPlayerScreen> {
 
       // 4. Load audio in just_audio
       if (_audioPath != null) {
+        // Use Uri.parse().toString() to normalize the URL safely without double-encoding
         final String fullUrl = _getAudioUrl(_audioPath!);
         debugPrint('Initializing player with remote URL: $fullUrl');
         await _audioPlayer.setUrl(fullUrl);
       } else {
-        throw Exception('Audio path is missing in database for this voice.');
+        // Fallback to local asset audio for 'system' voice or missing audio path
+        debugPrint('No remote audio found — falling back to local asset audio.');
+        await _audioPlayer.setAsset('assets/sounds/rain.mp3');
       }
 
       // Start listening to state changes

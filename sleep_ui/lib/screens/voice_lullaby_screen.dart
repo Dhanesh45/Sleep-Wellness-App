@@ -2,11 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:sleep_ui/story/models/voice_clone.dart';
 import 'package:sleep_ui/screens/voice_record_screen.dart';
+import 'package:sleep_ui/screens/voice_details_screen.dart';
+import 'package:uuid/uuid.dart';
 
 class VoiceLullabyScreen extends StatefulWidget {
   const VoiceLullabyScreen({super.key});
@@ -16,14 +17,7 @@ class VoiceLullabyScreen extends StatefulWidget {
 }
 
 class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
-  PlatformFile? _selectedFile;
-  AudioPlayer? _audioPlayer;
-  Duration _position = Duration.zero;
-  Duration _duration = Duration.zero;
-  bool _isPlaying = false;
-  bool _isPlayerLoading = false;
-  bool _playerHasError = false;
-  String? _playerErrorMessage;
+  VoiceDetailsResult? _voiceDetails;
   List<VoiceClone> _userVoices = [];
   bool _isLoadingVoices = true;
 
@@ -39,28 +33,19 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
     });
 
     try {
-      final user = Supabase.instance.client.auth.currentUser;
-      if (user != null) {
-        final response = await Supabase.instance.client
-            .from('voice_clones')
-            .select('*')
-            .eq('userid', user.id)
-            .order('createdat', ascending: false);
-
-        final List<dynamic> data = response as List<dynamic>;
-        if (mounted) {
-          setState(() {
-            _userVoices = data.map((e) => VoiceClone.fromMap(e)).toList();
-            _isLoadingVoices = false;
-          });
-        }
-      } else {
-        if (mounted) {
-          setState(() {
-            _userVoices = [];
-            _isLoadingVoices = false;
-          });
-        }
+      // Query all voice clones to ensure friend voices (e.g. Rogith) show up in the library in this dev environment
+      final query = Supabase.instance.client
+          .from('voice_clones')
+          .select('*');
+      
+      final response = await query.order('createdat', ascending: false);
+      final List<dynamic> data = response as List<dynamic>;
+      
+      if (mounted) {
+        setState(() {
+          _userVoices = data.map((e) => VoiceClone.fromMap(e)).toList();
+          _isLoadingVoices = false;
+        });
       }
     } catch (e) {
       debugPrint('Error loading user voices: $e');
@@ -74,86 +59,27 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
 
   @override
   void dispose() {
-    _disposePlayer();
     super.dispose();
   }
 
-  Future<void> _initPlayer(String filePath) async {
-    await _disposePlayer();
-
-    setState(() {
-      _isPlayerLoading = true;
-      _playerHasError = false;
-      _playerErrorMessage = null;
-      _position = Duration.zero;
-      _duration = Duration.zero;
-    });
-
-    try {
-      final player = AudioPlayer();
-      _audioPlayer = player;
-
-      debugPrint('Player: Initializing audio player for local file: $filePath');
-      
-      final resolvedDuration = await player.setFilePath(filePath);
-      if (resolvedDuration != null) {
-        setState(() {
-          _duration = resolvedDuration;
-        });
-      }
-
-      player.playerStateStream.listen((state) {
-        debugPrint('Player Event: processingState = ${state.processingState}, playing = ${state.playing}');
-        if (mounted) {
-          setState(() {
-            _isPlaying = state.playing;
-            if (state.processingState == ProcessingState.completed) {
-              player.seek(Duration.zero);
-              player.pause();
-            }
-          });
-        }
-      });
-
-      player.positionStream.listen((pos) {
-        if (mounted) {
-          setState(() {
-            _position = pos;
-          });
-        }
-      });
-
-      player.durationStream.listen((dur) {
-        if (mounted && dur != null) {
-          setState(() {
-            _duration = dur;
-          });
-        }
-      });
-
+  /// Navigate to VoiceDetailsScreen with the given file info.
+  Future<void> _navigateToVoiceDetails(String filePath, String fileName, int fileSize) async {
+    final result = await Navigator.push<VoiceDetailsResult>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VoiceDetailsScreen(
+          filePath: filePath,
+          fileName: fileName,
+          fileSize: fileSize,
+        ),
+      ),
+    );
+    if (result != null && mounted) {
       setState(() {
-        _isPlayerLoading = false;
+        _voiceDetails = result;
       });
-    } catch (e) {
-      debugPrint('Player Error: Failed to initialize audio preview: $e');
-      setState(() {
-        _isPlayerLoading = false;
-        _playerHasError = true;
-        _playerErrorMessage = 'Unsupported or invalid audio format.';
-      });
-    }
-  }
-
-  Future<void> _disposePlayer() async {
-    if (_audioPlayer != null) {
-      debugPrint('Player: Disposing audio player');
-      try {
-        await _audioPlayer!.stop();
-        await _audioPlayer!.dispose();
-      } catch (e) {
-        debugPrint('Player Error: Error disposing player: $e');
-      }
-      _audioPlayer = null;
+      // Auto-trigger audio upload to Supabase storage
+      _generateSleepAudio();
     }
   }
 
@@ -167,53 +93,12 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
       if (result != null && result.files.single.path != null) {
         final PlatformFile file = result.files.single;
         final String filePath = file.path!;
-        final String fileName = file.name;
-        final int fileSize = file.size;
-
-        // Print requirements
-        debugPrint('--- Audio File Uploaded ---');
-        debugPrint('File Path: $filePath');
-        debugPrint('File Name: $fileName');
-        debugPrint('File Size: $fileSize bytes');
-
-        // Verify file exists
         final bool exists = await File(filePath).exists();
-        debugPrint('File exists check: $exists');
-
         if (exists) {
-          setState(() {
-            _selectedFile = file;
-          });
-
-          await _initPlayer(filePath);
-
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Row(
-                  children: [
-                    const Icon(Icons.check_circle_rounded, color: Colors.black),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Successfully loaded: $fileName',
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                backgroundColor: const Color(0xFFFB923C),
-                duration: const Duration(seconds: 3),
-              ),
-            );
+            await _navigateToVoiceDetails(filePath, file.name, file.size);
           }
         } else {
-          setState(() {
-            _selectedFile = null;
-          });
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -223,8 +108,6 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
             );
           }
         }
-      } else {
-        debugPrint('User canceled file picker');
       }
     } catch (e) {
       debugPrint('Error picking file: $e');
@@ -239,15 +122,14 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
     }
   }
 
-  void _clearSelectedFile() async {
-    await _disposePlayer();
+  void _clearVoiceDetails() {
     setState(() {
-      _selectedFile = null;
+      _voiceDetails = null;
     });
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('File removed.'),
+          content: Text('Voice entry removed.'),
           duration: Duration(seconds: 1),
         ),
       );
@@ -267,62 +149,116 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
     return '${twoDigits(minutes)}:${twoDigits(seconds)}';
   }
 
-  void _generateSleepAudio() {
-    if (_selectedFile == null) return;
+  Future<void> _generateSleepAudio() async {
+    if (_voiceDetails == null) return;
     
+    final userId = Supabase.instance.client.auth.currentUser?.id ?? 'dev-user-id';
+    final voiceId = const Uuid().v4();
+    final file = File(_voiceDetails!.filePath);
+    final ext = file.path.split('.').last;
+    final path = '$userId/$voiceId/audio.$ext';
+
+    // Show loading indicator
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFF111827),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: const BorderSide(color: Color(0xFF1F2937), width: 1),
-          ),
-          title: Row(
-            children: [
-              const Icon(Icons.auto_awesome, color: Color(0xFFFB923C)),
-              const SizedBox(width: 8),
-              Text(
-                'Generating Sleep Audio',
-                style: GoogleFonts.nunito(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Successfully selected "${_selectedFile!.name}".',
-                style: GoogleFonts.quicksand(color: Colors.white70, fontSize: 13),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Local voice processing feature mock run completed. Supabase database sync & Cartesia voice synthesis will follow in the next steps.',
-                style: GoogleFonts.quicksand(color: Colors.grey, fontSize: 12, height: 1.4),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                'Dismiss',
-                style: GoogleFonts.quicksand(
-                  color: const Color(0xFFFB923C),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFB923C)),
+        ),
+      ),
     );
+
+    try {
+      await Supabase.instance.client.storage.from('voice-audios').upload(
+        path,
+        file,
+        fileOptions: const FileOptions(cacheControl: '3600', upsert: false),
+      );
+
+      final generatedUrl = Supabase.instance.client.storage.from('voice-audios').getPublicUrl(path);
+
+      debugPrint('Bucket: voice-audios');
+      debugPrint('Path: $path');
+      debugPrint('Generated URL: $generatedUrl');
+
+      if (mounted) {
+        Navigator.pop(context); // Close loading dialog
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Audio uploaded successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        
+        // Show success dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: const Color(0xFF111827),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: const BorderSide(color: Color(0xFF1F2937), width: 1),
+              ),
+              title: Row(
+                children: [
+                  const Icon(Icons.auto_awesome, color: Color(0xFFFB923C)),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Generating Sleep Audio',
+                    style: GoogleFonts.nunito(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Voice: "${_voiceDetails!.voiceName}" (${_voiceDetails!.language})',
+                    style: GoogleFonts.quicksand(color: Colors.white70, fontSize: 13),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Local voice processing feature mock run completed. Supabase database sync & Cartesia voice synthesis will follow in the next steps.',
+                    style: GoogleFonts.quicksand(color: Colors.grey, fontSize: 12, height: 1.4),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Dismiss',
+                    style: GoogleFonts.quicksand(
+                      color: const Color(0xFFFB923C),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      debugPrint('Error uploading audio: $e');
+      if (mounted) {
+        Navigator.pop(context); // Close loading dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Upload failed: $e'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -483,39 +419,7 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
                             if (await file.exists()) {
                               final fileName = recordedPath.split(Platform.pathSeparator).last;
                               final fileSize = await file.length();
-                              
-                              setState(() {
-                                _selectedFile = PlatformFile(
-                                  name: fileName,
-                                  size: fileSize,
-                                  path: recordedPath,
-                                );
-                              });
-                              await _initPlayer(recordedPath);
-                              
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Row(
-                                      children: [
-                                        const Icon(Icons.check_circle_rounded, color: Colors.black),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: Text(
-                                            'Successfully loaded recorded audio',
-                                            style: const TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    backgroundColor: const Color(0xFFFB923C),
-                                    duration: const Duration(seconds: 3),
-                                  ),
-                                );
-                              }
+                              await _navigateToVoiceDetails(recordedPath, fileName, fileSize);
                             }
                           }
                         },
@@ -564,8 +468,8 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
                         ),
                       ),
                     ),
-                    // Selected File info container
-                    if (_selectedFile != null) ...[
+                    // ── Voice Details summary card ──
+                    if (_voiceDetails != null) ...[
                       const SizedBox(height: 16),
                       Container(
                         padding: const EdgeInsets.all(16),
@@ -573,182 +477,94 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
                           color: const Color(0xFF111827),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: _playerHasError
-                                ? Colors.redAccent.withValues(alpha: 0.3)
-                                : const Color(0xFFFB923C).withValues(alpha: 0.3),
+                            color: const Color(0xFFFB923C).withValues(alpha: 0.3),
                             width: 1,
                           ),
                         ),
-                        child: _isPlayerLoading
-                            ? Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Header row: avatar + name + close
+                            Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor: const Color(0xFF2E2319),
+                                  child: Text(
+                                    _voiceDetails!.voiceName.isNotEmpty
+                                        ? _voiceDetails!.voiceName[0].toUpperCase()
+                                        : 'V',
+                                    style: GoogleFonts.nunito(
+                                      color: const Color(0xFFFB923C),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
                                   child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFB923C)),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
                                       Text(
-                                        'Loading audio preview...',
+                                        _voiceDetails!.voiceName,
+                                        style: GoogleFonts.nunito(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '${_formatFileSize(_voiceDetails!.fileSize)}  •  ${_formatDuration(_voiceDetails!.audioDuration)}',
                                         style: GoogleFonts.quicksand(
                                           color: const Color(0xFF9CA3AF),
-                                          fontSize: 12,
+                                          fontSize: 11,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              )
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // File Title & Size info row
-                                  Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 16,
-                                        backgroundColor: _playerHasError
-                                            ? Colors.redAccent.withValues(alpha: 0.1)
-                                            : const Color(0xFF1F2937),
-                                        child: Icon(
-                                          _playerHasError
-                                              ? Icons.error_outline_rounded
-                                              : Icons.audiotrack_rounded,
-                                          color: _playerHasError ? Colors.redAccent : const Color(0xFFFB923C),
-                                          size: 16,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              _selectedFile!.name,
-                                              style: GoogleFonts.nunito(
-                                                color: Colors.white,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              _playerHasError
-                                                  ? (_playerErrorMessage ?? 'Error loading audio')
-                                                  : _formatFileSize(_selectedFile!.size),
-                                              style: GoogleFonts.quicksand(
-                                                color: _playerHasError ? Colors.redAccent : const Color(0xFF9CA3AF),
-                                                fontSize: 11,
-                                                fontWeight: _playerHasError ? FontWeight.w600 : FontWeight.normal,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.close_rounded, color: Colors.grey, size: 20),
-                                        onPressed: _clearSelectedFile,
-                                      ),
-                                    ],
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF1F2937),
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                  if (!_playerHasError) ...[
-                                    const SizedBox(height: 16),
-                                    // Audio Seek Slider
-                                    SliderTheme(
-                                      data: SliderTheme.of(context).copyWith(
-                                        activeTrackColor: const Color(0xFFFB923C),
-                                        inactiveTrackColor: const Color(0xFF1F2937),
-                                        thumbColor: const Color(0xFFFB923C),
-                                        overlayColor: const Color(0xFFFB923C).withValues(alpha: 0.2),
-                                        trackHeight: 3,
-                                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5),
-                                        overlayShape: const RoundSliderOverlayShape(overlayRadius: 10),
-                                      ),
-                                      child: Slider(
-                                        value: _position.inMilliseconds.toDouble().clamp(0.0, _duration.inMilliseconds.toDouble()),
-                                        min: 0.0,
-                                        max: _duration.inMilliseconds.toDouble() > 0.0 ? _duration.inMilliseconds.toDouble() : 1.0,
-                                        onChanged: (value) {
-                                          _audioPlayer?.seek(Duration(milliseconds: value.toInt()));
-                                        },
-                                      ),
+                                  child: Text(
+                                    _voiceDetails!.language.substring(0, 2).toUpperCase(),
+                                    style: GoogleFonts.quicksand(
+                                      color: const Color(0xFFFB923C),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10,
                                     ),
-                                    // Timing labels row
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            _formatDuration(_position),
-                                            style: GoogleFonts.quicksand(
-                                              color: const Color(0xFF9CA3AF),
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          Text(
-                                            _formatDuration(_duration),
-                                            style: GoogleFonts.quicksand(
-                                              color: const Color(0xFF9CA3AF),
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    // Control buttons: Play/Pause/Restart
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        // Restart button
-                                        IconButton(
-                                          icon: const Icon(Icons.replay_rounded, color: Colors.white, size: 22),
-                                          onPressed: () {
-                                            _audioPlayer?.seek(Duration.zero);
-                                            _audioPlayer?.play();
-                                          },
-                                          tooltip: 'Restart',
-                                        ),
-                                        const SizedBox(width: 20),
-                                        // Play/Pause button
-                                        GestureDetector(
-                                          onTap: () {
-                                            if (_isPlaying) {
-                                              _audioPlayer?.pause();
-                                            } else {
-                                              _audioPlayer?.play();
-                                            }
-                                          },
-                                          child: Container(
-                                            width: 44,
-                                            height: 44,
-                                            decoration: const BoxDecoration(
-                                              color: Color(0xFFFB923C),
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Icon(
-                                              _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                                              color: Colors.black,
-                                              size: 24,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ],
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                IconButton(
+                                  icon: const Icon(Icons.close_rounded, color: Colors.grey, size: 20),
+                                  onPressed: _clearVoiceDetails,
+                                ),
+                              ],
+                            ),
+                            if (_voiceDetails!.description != null &&
+                                _voiceDetails!.description!.isNotEmpty) ...[
+                              const SizedBox(height: 10),
+                              Text(
+                                _voiceDetails!.description!,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.quicksand(
+                                  color: const Color(0xFF9CA3AF),
+                                  fontSize: 12,
+                                  height: 1.4,
+                                ),
                               ),
+                            ],
+                          ],
+                        ),
                       ),
                     ],
                     const SizedBox(height: 36),
@@ -1031,42 +847,8 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
                 ),
               ),
             ),
-            // Bottom Sticky Button: Generate Sleep Audio
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton.icon(
-                  onPressed: _selectedFile != null ? _generateSleepAudio : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _selectedFile != null
-                        ? const Color(0xFFFB923C)
-                        : const Color(0xFF2C2216),
-                    foregroundColor: _selectedFile != null ? Colors.black : Colors.grey,
-                    disabledBackgroundColor: const Color(0xFF2C2216),
-                    disabledForegroundColor: Colors.grey,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(26),
-                    ),
-                    elevation: 0,
-                  ),
-                  icon: Icon(
-                    Icons.auto_awesome,
-                    size: 20,
-                    color: _selectedFile != null ? Colors.black : Colors.grey,
-                  ),
-                  label: Text(
-                    'Generate Sleep Audio',
-                    style: GoogleFonts.quicksand(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      color: _selectedFile != null ? Colors.black : Colors.grey,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Bottom Sticky Button: Generate Sleep Audio has been removed per request.
+            // Upload triggers automatically when details are saved.
           ],
         ),
       ),

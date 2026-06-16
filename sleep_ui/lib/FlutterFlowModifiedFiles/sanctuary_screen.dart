@@ -488,7 +488,7 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
       children: [
         Expanded(
           child: _buildRoundedBlobCard(
-            title: 'Audio Zone',
+            title: 'Sleep sounds',
             subtitle: 'Vibes & Sounds',
             icon: Icons.graphic_eq_rounded,
             colors: const [Color(0xFF5F431A), Color(0xFF2A1B07)],
@@ -537,18 +537,6 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
           borderRadius: BorderRadius.circular(30),
           child: Stack(
             children: [
-              Positioned(
-                right: 14,
-                top: 10,
-                child: Container(
-                  width: 86,
-                  height: 86,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.10),
-                  ),
-                ),
-              ),
               Positioned(
                 left: 18,
                 top: 16,
