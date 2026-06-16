@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:sleep_ui/FlutterFlowModifiedFiles/voice_mode_screen.dart';
 import 'package:sleep_ui/SleepHub/dashboard_screen.dart';
 import 'package:sleep_ui/AudioHub/sleep_dashboard.dart';
+import 'package:sleep_ui/story/screens/stories_screen.dart';
 
 class SanctuaryHomePage extends StatefulWidget {
   const SanctuaryHomePage({super.key});
@@ -23,7 +24,7 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
   final Color _cardBackground = const Color(0xFF111827);
   final Color _primaryText = Colors.white;
   final Color _secondaryText = const Color(0xFF9CA3AF);
-  final Color _accentYellow = const Color(0xFFFFB03A);
+  final Color _accentYellow = const Color(0xFFFB923C);
   final Color _accentOrange = const Color(0xFFFB923C);
   final Color _accentPink = const Color(0xFFFB7185);
   final Color _accentBlue = const Color(0xFF38BDF8);
@@ -44,10 +45,7 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
         activeTab = const DashboardScreen();
         break;
       case 2:
-        activeTab = const SleepDashboard(
-          embedded: true,
-          mode: AudioHubTabMode.storiesOnly,
-        );
+        activeTab = const StoriesScreen();
         break;
       case 3:
         activeTab = const SleepDashboard(
@@ -490,7 +488,7 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
       children: [
         Expanded(
           child: _buildRoundedBlobCard(
-            title: 'Audio Zone',
+            title: 'Sleep sounds',
             subtitle: 'Vibes & Sounds',
             icon: Icons.graphic_eq_rounded,
             colors: const [Color(0xFF5F431A), Color(0xFF2A1B07)],
@@ -539,18 +537,6 @@ class _SanctuaryHomePageState extends State<SanctuaryHomePage> {
           borderRadius: BorderRadius.circular(30),
           child: Stack(
             children: [
-              Positioned(
-                right: 14,
-                top: 10,
-                child: Container(
-                  width: 86,
-                  height: 86,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.10),
-                  ),
-                ),
-              ),
               Positioned(
                 left: 18,
                 top: 16,

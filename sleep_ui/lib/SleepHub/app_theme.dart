@@ -6,7 +6,7 @@ class AppColors {
   static const bgCardLight = Color(0xFF1F2937);
   static const bgCardMid = Color(0xFF0F172A);
 
-  static const accentOrange = Color(0xFFFFB03A);
+  static const accentOrange = Color(0xFFFB923C);
   static const accentOrangeLight = Color(0xFFFFCA7C);
   static const accentOrangeDark = Color(0xFFE28B10);
 
@@ -26,7 +26,7 @@ class AppColors {
   static const cardBorder = Color(0xFF1F2937);
 
   static const scoreRingBg = Color(0xFF1F2937);
-  static const scoreRingFg = Color(0xFFFFB03A);
+  static const scoreRingFg = Color(0xFFFB923C);
 }
 
 class AppTheme {

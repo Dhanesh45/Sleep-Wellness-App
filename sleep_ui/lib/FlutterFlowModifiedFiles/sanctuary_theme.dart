@@ -6,7 +6,7 @@ abstract final class SanctuaryTheme {
   static const cardBackground = Color(0xFF111827);
   static const primaryText = Colors.white;
   static const secondaryText = Color(0xFF9CA3AF);
-  static const accentYellow = Color(0xFFFFB03A);
+  static const accentYellow = Color(0xFFFB923C);
   static const accentOrange = Color(0xFFFB923C);
   static const accentPink = Color(0xFFFB7185);
   static const accentBlue = Color(0xFF38BDF8);

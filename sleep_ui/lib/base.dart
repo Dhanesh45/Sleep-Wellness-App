@@ -13,6 +13,10 @@ import 'package:sleep_ui/screens/sleep_calculator_screen.dart';
 import 'package:sleep_ui/FlutterFlowModifiedFiles/DeepSleepAudioPlayer.dart';
 import 'package:sleep_ui/FlutterFlowModifiedFiles/sanctuary_screen.dart';
 import 'package:sleep_ui/FlutterFlowModifiedFiles/voice_mode_screen.dart';
+import 'package:sleep_ui/story/screens/stories_screen.dart';
+import 'package:sleep_ui/story/screens/story_details_screen.dart';
+import 'package:sleep_ui/story/models/story_template.dart';
+import 'package:sleep_ui/screens/voice_lullaby_screen.dart';
 
 // --- NEW BASE PAGE FOR TESTING SCREENS ---
 class BaseNavigationPage extends StatelessWidget {
@@ -65,6 +69,31 @@ class BaseNavigationPage extends StatelessWidget {
                 context,
                 'Deep Sleep Audio Player',
                 DeepSleepAudioPlayer(),
+              ),
+              _buildNavButton(
+                context,
+                'Sleep Stories (Localized)',
+                const StoriesScreen(),
+              ),
+              _buildNavButton(
+                context,
+                'Story Details (Dummy)',
+                StoryDetailsScreen(
+                  story: StoryTemplate(
+                    storyid: 'dummy-id',
+                    title: 'The Whispering Pines',
+                    description: 'Drift into a world where the trees share ancient secrets and the wind carries the weight of a thousand peaceful dreams. This story follows a lone traveler finding their way home through the glow of bioluminescent flora and the soft hum of the earth.',
+                    storyText: 'Dummy story text content that is quite long to test things.',
+                    language: 'en',
+                    thumbnailPath: 'assets/images/ravenstorytb.png',
+                    createdat: DateTime.now(),
+                  ),
+                ),
+              ),
+              _buildNavButton(
+                context,
+                'Voice Lullaby (Upload)',
+                const VoiceLullabyScreen(),
               ),
             ],
           ),
