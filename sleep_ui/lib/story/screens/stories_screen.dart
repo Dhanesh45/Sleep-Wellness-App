@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:sleep_ui/story/models/story_template.dart';
 import 'package:sleep_ui/story/widgets/story_card.dart';
+import 'package:sleep_ui/story/screens/story_details_screen.dart';
+import 'package:sleep_ui/screens/voice_lullaby_screen.dart';
 
 class StoriesScreen extends StatefulWidget {
   const StoriesScreen({super.key});
@@ -185,12 +187,9 @@ class _StoriesScreenState extends State<StoriesScreen> {
   Widget _buildVoiceCloneCard() {
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Voice cloning coming soon'),
-            duration: Duration(seconds: 2),
-            backgroundColor: Color(0xFFFB923C),
-          ),
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const VoiceLullabyScreen()),
         );
       },
       child: Container(
@@ -307,6 +306,16 @@ class _StoriesScreenState extends State<StoriesScreen> {
       itemBuilder: (context, index) {
         return StoryCard(
           story: _stories[index],
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => StoryDetailsScreen(
+                  story: _stories[index],
+                ),
+              ),
+            );
+          },
         );
       },
     );

@@ -15,7 +15,7 @@ class SleepDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = const Color(0xFFFFB03A); // Sanctuary accentYellow
+    final themeColor = const Color(0xFFFB923C); // Sanctuary accentOrange
 
     return Scaffold(
       backgroundColor: const Color(0xFF050814),
