@@ -797,30 +797,7 @@ class _StoryDetailsScreenState extends State<StoryDetailsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          // Privacy Label
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.shield_outlined,
-                color: Color(0xFF38BDF8),
-                size: 13,
-              ),
-              const SizedBox(width: 6),
-              Flexible(
-                child: Text(
-                  LocalizedDetails.getPrivacyLabel(lang),
-                  style: GoogleFonts.quicksand(
-                    color: const Color(0xFF9CA3AF),
-                    fontSize: 10,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
+
         ],
       ),
     );

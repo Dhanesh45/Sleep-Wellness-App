@@ -747,28 +747,7 @@ class _StoryAudioPlayerScreenState extends State<StoryAudioPlayerScreen> {
                       ),
                     ),
                     const Spacer(flex: 3),
-                    // Bottom Privacy Label
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.shield_outlined,
-                          color: Color(0xFF38BDF8),
-                          size: 14,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          LocalizedPlayer.getPrivacyLabel(lang),
-                          style: GoogleFonts.quicksand(
-                            color: const Color(0xFF9CA3AF),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
+
                   ],
                 ),
               ),
