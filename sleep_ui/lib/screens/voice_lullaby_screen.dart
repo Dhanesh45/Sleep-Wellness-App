@@ -804,56 +804,7 @@ class _VoiceLullabyScreenState extends State<VoiceLullabyScreen> {
                         }).toList(),
                       ),
                     ],
-                    const SizedBox(height: 20),
-                    // Local Safeguard Architecture Card
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF161F30),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: const Color(0xFF1F2937),
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(
-                            Icons.shield_outlined,
-                            color: Color(0xFF34D399),
-                            size: 24,
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Local Safe-Guard Architecture',
-                                  style: GoogleFonts.nunito(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  'Your voice data is processed locally on this device. It never leaves your phone and is never shared with third parties.',
-                                  style: GoogleFonts.quicksand(
-                                    color: const Color(0xFF9CA3AF),
-                                    fontSize: 12,
-                                    height: 1.4,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 12),
                   ],
                 ),
               ),
