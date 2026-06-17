@@ -275,6 +275,8 @@ class SleepAnalyzerScreen extends StatelessWidget {
                               "S",
                             ];
 
+                            // Skip fractional ticks to prevent duplicate labels
+                            if (value != value.roundToDouble()) return const SizedBox();
                             if (value.toInt() < 0 || value.toInt() >= days.length) {
                               return const SizedBox();
                             }
@@ -419,6 +421,8 @@ class SleepAnalyzerScreen extends StatelessWidget {
                 "W4",
               ];
 
+              // Skip fractional ticks to prevent duplicate labels
+              if (value != value.roundToDouble()) return const SizedBox();
               if (value.toInt() < 0 ||
                   value.toInt() >= weeks.length) {
                 return const SizedBox();
