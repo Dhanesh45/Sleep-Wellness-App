@@ -5,6 +5,7 @@ class SleepPlayer extends StatefulWidget {
   final String title;
   final String assetPath;
   final String imageUrl;
+  final String? audioUrl;
 
   const SleepPlayer({
     Key? key,
@@ -12,6 +13,7 @@ class SleepPlayer extends StatefulWidget {
     this.assetPath = 'assets/sounds/ocean dreams.mp3',
     this.imageUrl =
         'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500',
+    this.audioUrl,
   }) : super(key: key);
 
   @override
@@ -20,15 +22,9 @@ class SleepPlayer extends StatefulWidget {
 
 class _SleepPlayerState extends State<SleepPlayer> {
   late AudioPlayer _musicPlayer;
-  late AudioPlayer _rainPlayer;
-  late AudioPlayer _windPlayer;
-  late AudioPlayer _thunderPlayer;
 
   bool isPlaying = false;
   bool isLooping = true;
-  double rainValue = 0.65;
-  double windValue = 0.20;
-  double thunderValue = 0.05;
 
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
@@ -41,26 +37,23 @@ class _SleepPlayerState extends State<SleepPlayer> {
 
   Future<void> _initializeAudioPlayers() async {
     _musicPlayer = AudioPlayer();
-    _rainPlayer = AudioPlayer();
-    _windPlayer = AudioPlayer();
-    _thunderPlayer = AudioPlayer();
 
     try {
-      await _musicPlayer.setAsset(widget.assetPath);
-      await _rainPlayer.setAsset(widget.assetPath);
-      await _windPlayer.setAsset(widget.assetPath);
-      await _thunderPlayer.setAsset(widget.assetPath);
+      if (widget.audioUrl != null && widget.audioUrl!.isNotEmpty) {
+        await _musicPlayer.setUrl(widget.audioUrl!);
+      } else {
+        await _musicPlayer.setAsset(widget.assetPath);
+      }
 
       _musicPlayer.durationStream.listen(
         (d) => setState(() => _duration = d ?? Duration.zero),
       );
+
       _musicPlayer.positionStream.listen((p) => setState(() => _position = p));
 
       _setAllLoopModes(isLooping);
+
       await _musicPlayer.setVolume(1.0);
-      await _rainPlayer.setVolume(rainValue);
-      await _windPlayer.setVolume(windValue);
-      await _thunderPlayer.setVolume(thunderValue);
     } catch (e) {
       debugPrint("Error loading audio: $e");
     }
@@ -69,9 +62,6 @@ class _SleepPlayerState extends State<SleepPlayer> {
   void _setAllLoopModes(bool loop) {
     LoopMode mode = loop ? LoopMode.one : LoopMode.off;
     _musicPlayer.setLoopMode(mode);
-    _rainPlayer.setLoopMode(mode);
-    _windPlayer.setLoopMode(mode);
-    _thunderPlayer.setLoopMode(mode);
   }
 
   void _toggleLoop() {
@@ -88,23 +78,15 @@ class _SleepPlayerState extends State<SleepPlayer> {
     setState(() => isPlaying = !isPlaying);
     if (isPlaying) {
       _musicPlayer.play();
-      _rainPlayer.play();
-      _windPlayer.play();
-      _thunderPlayer.play();
     } else {
       _musicPlayer.pause();
-      _rainPlayer.pause();
-      _windPlayer.pause();
-      _thunderPlayer.pause();
     }
   }
 
   @override
   void dispose() {
     _musicPlayer.dispose();
-    _rainPlayer.dispose();
-    _windPlayer.dispose();
-    _thunderPlayer.dispose();
+
     super.dispose();
   }
 

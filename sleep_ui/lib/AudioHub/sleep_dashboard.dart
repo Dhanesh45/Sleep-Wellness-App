@@ -78,9 +78,7 @@ class _SleepDashboardState extends State<SleepDashboard> {
                 children: [
                   _buildHeader(),
                   const SizedBox(height: 20),
-                  _buildTwilightBanner(context),
-                  const SizedBox(height: 20),
-                  _buildHeroBanner(context),
+                  _buildCalmingMusicSection(context),
                   const SizedBox(height: 20),
 
                   // NATURAL SOUNDS SECTION - 17 CARDS
@@ -189,6 +187,8 @@ class _SleepDashboardState extends State<SleepDashboard> {
                         'wind_2',
                       ),
                     ]),
+                  _buildPodcastSection(context),
+                  const SizedBox(height: 20),
 
                   // STORIES SECTION
                   if (widget.mode != AudioHubTabMode.soundsOnly)
@@ -261,6 +261,174 @@ class _SleepDashboardState extends State<SleepDashboard> {
     );
   }
 
+  Widget _buildPodcastSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(20),
+          child: Text(
+            'Podcasts',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 220,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            children: [
+              _buildPodcastCard(
+                context,
+                'Why Do We Dream? ',
+                '8 min',
+                'https://plus.unsplash.com/premium_vector-1746931772572-4369e120780a?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjJ8fGRyZWFtfGVufDB8fDB8fHww',
+                'https://puzmgqkeiwmbxeknqdom.supabase.co/storage/v1/object/sign/podcasts/Why%20Do%20We%20Dream.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV80NWUwY2M2Yi00MzlmLTQwOGQtODFiNy1kNTkyZGFkMGMxYmUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwb2RjYXN0cy9XaHkgRG8gV2UgRHJlYW0ubXAzIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4MTY4ODQ1NSwiZXhwIjoxODEzMjI0NDU1fQ.AIUlVwCUw7ggZ1lQsilijBLJUMcQd1r3CVEar2LVsUw',
+              ),
+
+              _buildPodcastCard(
+                context,
+                'How Big is the Universe',
+                '17 min',
+                'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dW5pdmVyc2V8ZW58MHx8MHx8fDA%3D',
+                'https://puzmgqkeiwmbxeknqdom.supabase.co/storage/v1/object/sign/podcasts/How%20Big%20is%20the%20Universe.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV80NWUwY2M2Yi00MzlmLTQwOGQtODFiNy1kNTkyZGFkMGMxYmUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwb2RjYXN0cy9Ib3cgQmlnIGlzIHRoZSBVbml2ZXJzZS5tcDMiLCJzY29wZSI6ImRvd25sb2FkIiwiaWF0IjoxNzgxNjg4NTUwLCJleHAiOjE4MTMyMjQ1NTB9.IlNviObC99S0XXtQv_9PM2pMNRTJhf5G63yU6jiTqsA',
+              ),
+
+              _buildPodcastCard(
+                context,
+                'Self Calming',
+                '11 min',
+                'https://media.istockphoto.com/id/1313456479/photo/man-and-soul-yoga-lotus-pose-meditation-on-nebula-galaxy-background.jpg?s=612x612&w=0&k=20&c=jJ0pVed-sHjDBtomrO7KmR4qtIfH8OaNhjmEsXvJmAI=',
+                'https://puzmgqkeiwmbxeknqdom.supabase.co/storage/v1/object/sign/podcasts/Self%20Calming.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV80NWUwY2M2Yi00MzlmLTQwOGQtODFiNy1kNTkyZGFkMGMxYmUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwb2RjYXN0cy9TZWxmIENhbG1pbmcubXAzIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4MTY4ODU3OSwiZXhwIjoxODEzMjI0NTc5fQ.KMlMuCWAUlNWVhStDmDzcBfRrY6w50ZFUzD0IuvDZQc',
+              ),
+
+              _buildPodcastCard(
+                context,
+                'Everything Happens for A Reason',
+                '8 min',
+                'https://media.istockphoto.com/id/1430022513/photo/man-watching-beautiful-sunset-over-ocean.jpg?s=612x612&w=0&k=20&c=WHEdKvWDPgw__PATGZviNiY8bPTEv6hoJ-LOXDtWhzQ=',
+                'https://puzmgqkeiwmbxeknqdom.supabase.co/storage/v1/object/sign/podcasts/Everything%20Happens%20For%20A%20Reason.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV80NWUwY2M2Yi00MzlmLTQwOGQtODFiNy1kNTkyZGFkMGMxYmUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwb2RjYXN0cy9FdmVyeXRoaW5nIEhhcHBlbnMgRm9yIEEgUmVhc29uLm1wMyIsInNjb3BlIjoiZG93bmxvYWQiLCJpYXQiOjE3ODE2ODg1OTcsImV4cCI6MTgxMzIyNDU5N30.rt2sq1aAenyjn2ur3zt0nfwGfsOxRprWEzfIdSWGvyU',
+              ),
+
+              _buildPodcastCard(
+                context,
+                'How to Overcome Social Anxiety',
+                '21 min',
+                'https://media.istockphoto.com/id/1061203788/photo/silhouette-of-depressed-and-anxiety-person-head.jpg?s=612x612&w=0&k=20&c=5DFGyuQ46QLMR2GNE5qhRbRp1Pi5_8EFbpmq0GnFuXM=',
+                'https://puzmgqkeiwmbxeknqdom.supabase.co/storage/v1/object/sign/podcasts/How%20to%20Overcome%20Social%20Anxiety.mp3?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV80NWUwY2M2Yi00MzlmLTQwOGQtODFiNy1kNTkyZGFkMGMxYmUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJwb2RjYXN0cy9Ib3cgdG8gT3ZlcmNvbWUgU29jaWFsIEFueGlldHkubXAzIiwic2NvcGUiOiJkb3dubG9hZCIsImlhdCI6MTc4MTY4ODYyMiwiZXhwIjoxODEzMjI0NjIyfQ.V_iL2za2ngZ6X9uDnT0YggmrwcFUHwGC9VRtQl4G2D4',
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPodcastCard(
+    BuildContext context,
+    String title,
+    String duration,
+    String imageUrl,
+    String audioUrl,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => SleepPlayer(
+              title: title,
+              imageUrl: imageUrl,
+              audioUrl: audioUrl,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        width: 150,
+        margin: const EdgeInsets.only(right: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.network(
+                imageUrl,
+                height: 150,
+                width: 150,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    height: 150,
+                    width: 150,
+                    color: Colors.white10,
+                    child: const Icon(
+                      Icons.podcasts,
+                      color: Colors.white54,
+                      size: 50,
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              duration,
+              style: const TextStyle(color: Colors.grey, fontSize: 11),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCalmingMusicSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Text(
+            'Calming Music',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        SizedBox(
+          height: 190,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            children: [
+              SizedBox(width: 280, child: _buildTwilightBanner(context)),
+
+              const SizedBox(width: 16),
+
+              SizedBox(width: 280, child: _buildHeroBanner(context)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildHeroBanner(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.push(
@@ -275,7 +443,7 @@ class _SleepDashboardState extends State<SleepDashboard> {
         ),
       ),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
+        margin: EdgeInsets.zero,
         height: 180,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
@@ -349,7 +517,7 @@ class _SleepDashboardState extends State<SleepDashboard> {
         ),
       ),
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
+        margin: EdgeInsets.zero,
         height: 180,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
