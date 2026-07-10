@@ -16,23 +16,15 @@ class SleepRemedyScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF050814),
-              Color(0xFF09111F),
-              Color(0xFF111827),
-            ],
+            colors: [Color(0xFF050814), Color(0xFF09111F), Color(0xFF111827)],
           ),
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 22,
-              vertical: 20,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 /// HEADER
                 Text(
                   "Sleep Remedy",
@@ -57,7 +49,6 @@ class SleepRemedyScreen extends StatelessWidget {
                 const SizedBox(height: 30),
 
                 /// GUIDED BREATHING CARD
-
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(24),
@@ -66,44 +57,32 @@ class SleepRemedyScreen extends StatelessWidget {
                     gradient: const LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFF1A2142),
-                        Color(0xFF111827),
-                      ],
+                      colors: [Color(0xFF1A2142), Color(0xFF111827)],
                     ),
-                    border: Border.all(
-                      color: Colors.white10,
-                    ),
+                    border: Border.all(color: Colors.white10),
                   ),
                   child: Row(
                     children: [
-
                       Expanded(
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-
                             Container(
-  padding: const EdgeInsets.symmetric(
-    horizontal: 14,
-    vertical: 6,
-  ),
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(20),
-    gradient: const LinearGradient(
-      colors: [
-        accentColor,
-        accentDark,
-      ],
-    ),
-  ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                gradient: const LinearGradient(
+                                  colors: [accentColor, accentDark],
+                                ),
+                              ),
                               child: const Text(
                                 "Recommended",
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontWeight:
-                                      FontWeight.bold,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
@@ -112,11 +91,9 @@ class SleepRemedyScreen extends StatelessWidget {
 
                             Text(
                               "Guided\nBreathing",
-                              style:
-                                  GoogleFonts.poppins(
+                              style: GoogleFonts.poppins(
                                 color: Colors.white,
-                                fontWeight:
-                                    FontWeight.bold,
+                                fontWeight: FontWeight.bold,
                                 fontSize: 30,
                                 height: 1.1,
                               ),
@@ -126,8 +103,7 @@ class SleepRemedyScreen extends StatelessWidget {
 
                             Text(
                               "Slow your breathing,\nreduce stress and prepare your body for better sleep.",
-                              style:
-                                  GoogleFonts.poppins(
+                              style: GoogleFonts.poppins(
                                 color: Colors.white70,
                                 fontSize: 15,
                                 height: 1.6,
@@ -140,30 +116,20 @@ class SleepRemedyScreen extends StatelessWidget {
                               height: 52,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    '/breathing',
-                                  );
+                                  Navigator.pushNamed(context, '/breathing');
                                 },
-                                style:
-                                    ElevatedButton.styleFrom(
+                                style: ElevatedButton.styleFrom(
                                   backgroundColor: accentColor,
-                                  foregroundColor:
-                                      Colors.white,
+                                  foregroundColor: Colors.white,
                                   elevation: 8,
-                                  shape:
-                                      RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius
-                                            .circular(30),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
                                   ),
                                 ),
                                 child: Text(
                                   "Begin Session",
-                                  style:
-                                      GoogleFonts.poppins(
-                                    fontWeight:
-                                        FontWeight.w600,
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
@@ -180,14 +146,11 @@ class SleepRemedyScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           gradient: const RadialGradient(
-  colors: [
-    accentColor,
-    accentDark,
-  ],
-),
+                            colors: [accentColor, accentDark],
+                          ),
                           boxShadow: [
                             BoxShadow(
-                             color: accentColor.withValues(alpha: .35),
+                              color: accentColor.withValues(alpha: .35),
                               blurRadius: 30,
                               spreadRadius: 5,
                             ),
@@ -206,7 +169,6 @@ class SleepRemedyScreen extends StatelessWidget {
                 const SizedBox(height: 35),
 
                 /// NATURAL REMEDIES
-
                 Text(
                   "Natural Remedies",
                   style: GoogleFonts.poppins(
@@ -217,7 +179,7 @@ class SleepRemedyScreen extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 20),
-                                RemedyCard(
+                RemedyCard(
                   title: "Ashwagandha Root",
                   image:
                       "https://biozdrowy.pl/blog/wp-content/uploads/2024/07/Ashwagandha-czym-jest-i-jak-dziala-na-nasz-organizm-1024x538.jpg",
@@ -258,7 +220,6 @@ class SleepRemedyScreen extends StatelessWidget {
                 ),
 
                 const SizedBox(height: 30),
-
               ],
             ),
           ),
@@ -267,6 +228,7 @@ class SleepRemedyScreen extends StatelessWidget {
     );
   }
 }
+
 class RemedyCard extends StatelessWidget {
   final String title;
   final String image;
@@ -286,9 +248,7 @@ class RemedyCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF151C2E),
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: Colors.white10,
-        ),
+        border: Border.all(color: Colors.white10),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.25),
@@ -301,7 +261,6 @@ class RemedyCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           /// IMAGE
           Image.network(
             image,
@@ -315,7 +274,6 @@ class RemedyCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Text(
                   title,
                   style: GoogleFonts.poppins(
@@ -340,7 +298,6 @@ class RemedyCard extends StatelessWidget {
 
                 Row(
                   children: [
-
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -348,12 +305,10 @@ class RemedyCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white10,
-                        borderRadius:
-                            BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
                         children: const [
-
                           Icon(
                             Icons.timer_outlined,
                             color: Colors.white70,
@@ -364,9 +319,7 @@ class RemedyCard extends StatelessWidget {
 
                           Text(
                             "10 mins",
-                            style: TextStyle(
-                              color: Colors.white70,
-                            ),
+                            style: TextStyle(color: Colors.white70),
                           ),
                         ],
                       ),
